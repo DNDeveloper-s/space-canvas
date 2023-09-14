@@ -1,112 +1,101 @@
+'use client'
+
 import Image from 'next/image'
+import {useEffect, useRef, useState} from 'react';
+import {runCanvasScript} from '@/helpers/canvas';
+import {useMotionValueEvent, useScroll, motion} from 'framer-motion';
+import {late} from 'zod';
+
+interface Range {
+  from: number;
+  to: number;
+}
+
+interface LinearRateOptions {
+  desiredRange: Range;
+  relativeRange: Range;
+  acc: number;
+}
+
+function getLinearRate(startBase: number, endBase: number, startAcc: number, endAcc: number, latestValue: number) {
+  if(latestValue < startBase) return startAcc;
+  const x = (startAcc - endAcc) / (startBase - endBase);
+  let val = x * (latestValue) + 1;
+  if(endAcc > startAcc && val >= Math.max(startAcc, endAcc)) return Math.max(startAcc, endAcc);
+  if(endAcc < startAcc && val <= Math.min(startAcc, endAcc)) return Math.min(startAcc, endAcc);
+  return val;
+}
+
+
+export function getLinearRateNew(options: LinearRateOptions) {
+  const x = (options.desiredRange.from - options.desiredRange.to) / (options.relativeRange.from - options.relativeRange.to);
+  const y = options.desiredRange.to - (options.relativeRange.to * x);
+  let val = (options.acc * x) + y;
+  if(options.acc < options.relativeRange.from) val = options.desiredRange.from;
+  if(options.acc > options.relativeRange.to) val = options.desiredRange.to;
+  return val;
+}
 
 export default function Home() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const {scrollY} = useScroll();
+  const [animateValue, setAnimateValue] = useState({transform: 1, opacity: 1, blur: 0});
+  const [opacityValue, setOpacityValue] = useState(1);
+  // const [animateValue, setAnimateValue] = useState({transform: 1, opacity: 1});
+
+  useEffect(() => {
+    if(canvasRef.current) runCanvasScript(canvasRef.current);
+  }, [])
+
+  useMotionValueEvent(scrollY, 'change', latestValue => {
+    console.log('latestValue - ', latestValue);
+    {
+      const transformVal = getLinearRateNew({
+        desiredRange: {from: 1, to: 3},
+        relativeRange: {from: 0, to: 300},
+        acc: latestValue
+      });
+      // const opacityVal = getLinearRateNew(1, 0, 0, 300, latestValue);
+      const opacityVal = getLinearRateNew({
+        desiredRange: {from: 1, to: 0},
+        relativeRange: {from: 0, to: 300},
+        acc: latestValue
+      });
+      // const blurVal = getLinearRateNew(0, 10, 1100, 1240, latestValue);
+      const blurVal = getLinearRateNew({
+        desiredRange: {from: 0, to: 10},
+        relativeRange: {from: 1100, to: 1240},
+        acc: latestValue
+      });
+
+      setAnimateValue({
+        transform: transformVal,
+        opacity: opacityVal,
+        blur: blurVal
+      })
+
+      setOpacityValue(opacityVal);
+    }
+  })
+
+  useEffect(() => {
+  }, [])
+  // initial={{opacity: 1}} animate={{scale: animateValue.transform, opacity: opacityValue}}
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <main className="flex min-h-screen flex-col items-center justify-between">
+      <div style={{filter: `blur(${animateValue.blur}px)`}} className="w-screen h-screen fixed">
+        <canvas className="w-screen h-screen bg-[#0e1525] absolute top-0 left-0 z-10" ref={canvasRef}></canvas>
+        <div className="z-20 relative w-full h-full flex flex-col items-center justify-center text-white">
+          <div className="flex flex-col items-center justify-center" style={{transformOrigin: '50% 80% 0px', opacity: opacityValue, scale: animateValue.transform}}>
+            <h2 className="text-4xl font-bold">Learning should be fun</h2>
+            <p className="text-8xl font-extrabold mt-4">intuitive</p>
+          </div>
+          <motion.button animate={{opacity: opacityValue}} className="mt-10 bg-red-600 text-white px-10 py-3 rounded-lg">Start Learning</motion.button>
         </div>
       </div>
+      <div className="w-screen h-screen mt-[150vh] z-10 bg-black">
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
       </div>
     </main>
   )
