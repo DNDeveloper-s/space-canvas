@@ -1,6 +1,6 @@
 import {scroll} from 'framer-motion';
 import {start} from 'repl';
-import {getLinearRateNew} from '@/app/page';
+import {getLinearRateNew} from '@/helpers/index';
 
 interface Coords {
 	x: number;
