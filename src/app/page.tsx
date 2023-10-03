@@ -7,6 +7,7 @@ import Live from '../assets/images/live.png';
 import AppStore from '../assets/images/app-store.svg';
 import GooglePlay from '../assets/images/google-play.svg';
 import Image from 'next/image';
+import {LinearRateOptions} from '@/helpers/canvas';
 
 function getLinearRateNew(options: LinearRateOptions) {
   const x = (options.desiredRange.from - options.desiredRange.to) / (options.relativeRange.from - options.relativeRange.to);
@@ -324,7 +325,7 @@ export default function Home() {
                   <div>
                     <h2 className={"home-title title-text text-[2.5rem] font-[600]"} style={{opacity: visibilityObject.a.title}}>Comprehensive Learning</h2>
                     <p className="pt-[5px] text-[1.25rem] text-white tracking-[1px]" style={{opacity: visibilityObject.a.para}}>Every topic. Every concept. Every question.</p>
-                    <p className="pt-[5px] text-[1.25rem] text-white tracking-[1px]" style={{opacity: visibilityObject.a.para}}>India's most driven teachers have covered it all!</p>
+                    <p className="pt-[5px] text-[1.25rem] text-white tracking-[1px]" style={{opacity: visibilityObject.a.para}}>India&apos;s most driven teachers have covered it all!</p>
                   </div>
                   <div className="flex items-center gap-4 mt-10">
                     <Image className="h-10 w-auto" src={GooglePlay} alt="Google Play" />

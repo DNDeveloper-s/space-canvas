@@ -17,7 +17,7 @@ interface Range {
 	to: number;
 }
 
-interface LinearRateOptions {
+export interface LinearRateOptions {
 	desiredRange: Range;
 	relativeRange: Range;
 	acc: number;
