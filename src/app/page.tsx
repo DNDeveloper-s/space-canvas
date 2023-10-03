@@ -1,7 +1,7 @@
 'use client'
 
-import {useState} from 'react';
-import {useMotionValueEvent, useScroll} from 'framer-motion';
+import {useEffect, useRef, useState} from 'react';
+import {useMotionValue, useMotionValueEvent, useScroll} from 'framer-motion';
 import Iphone2 from '../assets/images/iPhone2.png';
 import Live from '../assets/images/live.png';
 import AppStore from '../assets/images/app-store.svg';
@@ -29,6 +29,7 @@ const resetObj = {
 
 export default function Home() {
   const {scrollY} = useScroll();
+  const cx = useMotionValue(0);
   const [visibilityObject, setVisibilityObject] = useState({
     a: {
       bg: 1,
@@ -40,14 +41,27 @@ export default function Home() {
     c: resetObj,
     d: resetObj
   });
+  const isFast = useRef(false);
+
+  useEffect(() => {
+    function handleWheel(e: WheelEvent) {
+      console.log('e - ', e.deltaMode, e.deltaY);
+      // isFast.current = e.deltaY > 80;
+      cx.set(e.deltaY);
+    }
+
+    window.addEventListener('wheel', handleWheel);
+
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+    }
+  }, [])
 
   useMotionValueEvent(scrollY, 'change', latestValue => {
-    console.log('latestValue - ', latestValue);
+    console.log('latestValue - ', latestValue, cx.getVelocity());
 
     // let i = 0;
-
-    let start
-
+    // if(cx.getVelocity() < 100) return;
 
     if(latestValue < 1400) {
       let a ={
@@ -61,16 +75,16 @@ export default function Home() {
       //   relativeRange: {from: 700, to: 1024},
       //   acc: latestValue
       // });
-      a.title = getLinearRateNew({
-        desiredRange: {from: 0, to: 0.9999},
-        relativeRange: {from: 536, to: 950},
-        acc: latestValue
-      });
-      a.para = getLinearRateNew({
-        desiredRange: {from: 0, to: 0.9999},
-        relativeRange: {from: 930, to: 1000},
-        acc: latestValue
-      });
+      // a.title = getLinearRateNew({
+      //   desiredRange: {from: 0, to: 0.9999},
+      //   relativeRange: {from: 536, to: 950},
+      //   acc: latestValue
+      // });
+      // a.para = getLinearRateNew({
+      //   desiredRange: {from: 0, to: 0.9999},
+      //   relativeRange: {from: 930, to: 1000},
+      //   acc: latestValue
+      // });
 
       if(latestValue > 1350) {
         a.title = a.para = getLinearRateNew({
