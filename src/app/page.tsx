@@ -43,6 +43,30 @@ export default function Home() {
   });
   const isFast = useRef(false);
 
+  const homeRefBg = useRef<HTMLDivElement>(null);
+  const homeRefImage = useRef<HTMLImageElement>(null);
+  const homeRef = useRef<HTMLHeadingElement>(null);
+  const homeRef1 = useRef<HTMLParagraphElement>(null);
+  const homeRef2 = useRef<HTMLParagraphElement>(null);
+
+  const videoRefBg = useRef<HTMLDivElement>(null);
+  const videoRefImage = useRef<HTMLImageElement>(null);
+  const videoRef = useRef<HTMLHeadingElement>(null);
+  const videoRef1 = useRef<HTMLParagraphElement>(null);
+  const videoRef2 = useRef<HTMLParagraphElement>(null);
+
+  const newsRefBg = useRef<HTMLDivElement>(null);
+  const newsRefImage = useRef<HTMLImageElement>(null);
+  const newsRef = useRef<HTMLHeadingElement>(null);
+  const newsRef1 = useRef<HTMLParagraphElement>(null);
+  const newsRef2 = useRef<HTMLParagraphElement>(null);
+
+  const blazeRefBg = useRef<HTMLDivElement>(null);
+  const blazeRefImage = useRef<HTMLImageElement>(null);
+  const blazeRef = useRef<HTMLHeadingElement>(null);
+  const blazeRef1 = useRef<HTMLParagraphElement>(null);
+  const blazeRef2 = useRef<HTMLParagraphElement>(null);
+
   useEffect(() => {
     function handleWheel(e: WheelEvent) {
       console.log('e - ', e.deltaMode, e.deltaY);
@@ -55,13 +79,18 @@ export default function Home() {
     return () => {
       window.removeEventListener('wheel', handleWheel);
     }
-  }, [])
+  }, []);
 
   useMotionValueEvent(scrollY, 'change', latestValue => {
     console.log('latestValue - ', latestValue, cx.getVelocity());
 
     // let i = 0;
     // if(cx.getVelocity() < 100) return;
+
+    if(!homeRef.current || !homeRefBg.current || !homeRefImage.current || !homeRef1.current || !homeRef2.current) return;
+    if(!videoRef.current || !videoRefBg.current || !videoRefImage.current || !videoRef1.current || !videoRef2.current) return;
+    if(!newsRef.current || !newsRefBg.current || !newsRefImage.current || !newsRef1.current || !newsRef2.current) return;
+    if(!blazeRef.current || !blazeRefBg.current || !blazeRefImage.current || !blazeRef1.current || !blazeRef2.current) return;
 
     if(latestValue < 1400) {
       let a ={
@@ -102,12 +131,35 @@ export default function Home() {
 
       console.log('a - ', a);
 
-      setVisibilityObject(c => ({
-        a,
-        b: resetObj,
-        c: resetObj,
-        d: resetObj
-      }))
+      // setVisibilityObject(c => ({
+      //   a,
+      //   b: resetObj,
+      //   c: resetObj,
+      //   d: resetObj
+      // }))
+      homeRef.current.style.opacity = a.title.toString();
+      homeRefBg.current.style.opacity = a.bg.toString();
+      homeRefImage.current.style.opacity = a.bg.toString();
+      homeRef1.current.style.opacity = a.para.toString();
+      homeRef2.current.style.opacity = a.para.toString();
+
+      videoRef.current.style.opacity = '0';
+      videoRefBg.current.style.opacity = '0';
+      videoRefImage.current.style.opacity = '0';
+      videoRef1.current.style.opacity = '0';
+      videoRef2.current.style.opacity = '0';
+
+      newsRef.current.style.opacity = '0';
+      newsRefBg.current.style.opacity = '0';
+      newsRefImage.current.style.opacity = '0';
+      newsRef1.current.style.opacity = '0';
+      newsRef2.current.style.opacity = '0';
+
+      blazeRef.current.style.opacity = '0';
+      blazeRefBg.current.style.opacity = '0';
+      blazeRefImage.current.style.opacity = '0';
+      blazeRef1.current.style.opacity = '0';
+      blazeRef2.current.style.opacity = '0';
     }
     if(latestValue > 1400 && latestValue < 2100) {
       let b = {
@@ -147,13 +199,36 @@ export default function Home() {
         });
       }
 
+      homeRef.current.style.opacity = '0'
+      homeRefBg.current.style.opacity = '0'
+      homeRefImage.current.style.opacity = '0'
+      homeRef1.current.style.opacity = '0'
+      homeRef2.current.style.opacity = '0'
 
-      setVisibilityObject(c => ({
-        a: resetObj,
-        b,
-        c: resetObj,
-        d: resetObj
-      }))
+      videoRef.current.style.opacity = b.title.toString();
+      videoRefBg.current.style.opacity = b.bg.toString();
+      videoRefImage.current.style.opacity = b.bg.toString();
+      videoRef1.current.style.opacity = b.para.toString();
+      videoRef2.current.style.opacity = b.para.toString();
+
+      newsRef.current.style.opacity = '0';
+      newsRefBg.current.style.opacity = '0';
+      newsRefImage.current.style.opacity = '0';
+      newsRef1.current.style.opacity = '0';
+      newsRef2.current.style.opacity = '0';
+
+      blazeRef.current.style.opacity = '0';
+      blazeRefBg.current.style.opacity = '0';
+      blazeRefImage.current.style.opacity = '0';
+      blazeRef1.current.style.opacity = '0';
+      blazeRef2.current.style.opacity = '0';
+
+      // setVisibilityObject(c => ({
+      //   a: resetObj,
+      //   b,
+      //   c: resetObj,
+      //   d: resetObj
+      // }))
     }
 
     if(latestValue > 1900 && latestValue < 1536 + 1024 + 1024) {
@@ -194,13 +269,36 @@ export default function Home() {
         });
       }
 
+      homeRef.current.style.opacity = '0'
+      homeRefBg.current.style.opacity = '0'
+      homeRefImage.current.style.opacity = '0'
+      homeRef1.current.style.opacity = '0'
+      homeRef2.current.style.opacity = '0'
 
-      setVisibilityObject(_c => ({
-        a: resetObj,
-        b: resetObj,
-        c,
-        d: resetObj
-      }))
+      videoRef.current.style.opacity = '0';
+      videoRefBg.current.style.opacity = '0';
+      videoRefImage.current.style.opacity = '0';
+      videoRef1.current.style.opacity = '0';
+      videoRef2.current.style.opacity = '0';
+
+      newsRef.current.style.opacity = c.title.toString();
+      newsRefBg.current.style.opacity = c.bg.toString();
+      newsRefImage.current.style.opacity = c.bg.toString();
+      newsRef1.current.style.opacity = c.para.toString();
+      newsRef2.current.style.opacity = c.para.toString();
+
+      blazeRef.current.style.opacity = '0';
+      blazeRefBg.current.style.opacity = '0';
+      blazeRefImage.current.style.opacity = '0';
+      blazeRef1.current.style.opacity = '0';
+      blazeRef2.current.style.opacity = '0';
+
+      // setVisibilityObject(_c => ({
+      //   a: resetObj,
+      //   b: resetObj,
+      //   c,
+      //   d: resetObj
+      // }))
     }
 
     if(latestValue > 2400 && latestValue < 1536 + 1024 + 1024 + 1024) {
@@ -242,12 +340,37 @@ export default function Home() {
       // }
 
 
-      setVisibilityObject(_c => ({
-        a: resetObj,
-        b: resetObj,
-        c: resetObj,
-        d
-      }))
+      homeRef.current.style.opacity = '0'
+      homeRefBg.current.style.opacity = '0'
+      homeRefImage.current.style.opacity = '0'
+      homeRef1.current.style.opacity = '0'
+      homeRef2.current.style.opacity = '0'
+
+      videoRef.current.style.opacity = '0';
+      videoRefBg.current.style.opacity = '0';
+      videoRefImage.current.style.opacity = '0';
+      videoRef1.current.style.opacity = '0';
+      videoRef2.current.style.opacity = '0';
+
+      newsRef.current.style.opacity = '0';
+      newsRefBg.current.style.opacity = '0';
+      newsRefImage.current.style.opacity = '0';
+      newsRef1.current.style.opacity = '0';
+      newsRef2.current.style.opacity = '0';
+
+      blazeRef.current.style.opacity = d.title.toString();
+      blazeRefBg.current.style.opacity = d.bg.toString();
+      blazeRefImage.current.style.opacity = d.bg.toString();
+      blazeRef1.current.style.opacity = d.para.toString();
+      blazeRef2.current.style.opacity = d.para.toString();
+
+
+      // setVisibilityObject(_c => ({
+      //   a: resetObj,
+      //   b: resetObj,
+      //   c: resetObj,
+      //   d
+      // }))
     }
     // if(latestValue > 1536 && latestValue < 1536 + 1024) {
     //   const a = getLinearRateNew({
@@ -315,18 +438,18 @@ export default function Home() {
       <div className="w-screen h-[350vh]">
         <div className="sticky top-0 left-0 w-screen h-[100vh]">
           <div className="absolute w-screen h-screen top-0 flex justify-between items-center left-0 z-50">
-            <div style={{opacity: visibilityObject.a.bg}} className="absolute top-1/2 left-1/2 transform rounded-full -translate-x-1/2 -translate-y-1/2 home-bg w-[80%] h-[80%]" />
-            <div style={{opacity: visibilityObject.b.bg}} className="absolute top-1/2 left-1/2 transform rounded-full -translate-x-1/2 -translate-y-1/2 video-bg w-[80%] h-[80%]" />
-            <div style={{opacity: visibilityObject.c.bg}} className="absolute top-1/2 left-1/2 transform rounded-full -translate-x-1/2 -translate-y-1/2 news-bg w-[80%] h-[80%]" />
-            <div style={{opacity: visibilityObject.d.bg}} className="absolute top-1/2 left-1/2 transform rounded-full -translate-x-1/2 -translate-y-1/2 blaze-bg w-[80%] h-[80%]" />
+            <div ref={homeRefBg} className="absolute top-1/2 left-1/2 transform rounded-full -translate-x-1/2 -translate-y-1/2 home-bg w-[80%] h-[80%]" />
+            <div ref={videoRefBg} className="absolute top-1/2 left-1/2 transform rounded-full -translate-x-1/2 -translate-y-1/2 video-bg w-[80%] h-[80%]" />
+            <div ref={newsRefBg} className="absolute top-1/2 left-1/2 transform rounded-full -translate-x-1/2 -translate-y-1/2 news-bg w-[80%] h-[80%]" />
+            <div ref={blazeRefBg} className="absolute top-1/2 left-1/2 transform rounded-full -translate-x-1/2 -translate-y-1/2 blaze-bg w-[80%] h-[80%]" />
             <div className={"w-full h-full backdrop-blur-[400px] absolute top-0 left-0"} />
             <div className="w-[90%] max-w-6xl mx-auto">
               <div className="relative w-[270px] h-auto">
                 <Image className="relative w-full" src={Iphone2} alt="Iphone" />
-                <Image style={{opacity: visibilityObject.a.bg}} className="absolute top-1/2 rounded-3xl left-1/2 transform -translate-y-1/2 -translate-x-1/2 h-auto w-[234px]" width={400} height={800} src="https://d1kjns6e6wnqfd.cloudfront.net/liveclass.webp" alt="Learning" />
-                <Image style={{opacity: visibilityObject.b.bg}} className="absolute top-1/2 rounded-3xl left-1/2 transform -translate-y-1/2 -translate-x-1/2 h-auto w-[234px]" width={400} height={800} src={Live} alt="Learning" />
-                <Image style={{opacity: visibilityObject.c.bg}} className="absolute top-1/2 rounded-3xl left-1/2 transform -translate-y-1/2 -translate-x-1/2 h-auto w-[234px]" width={400} height={800} src="https://d1kjns6e6wnqfd.cloudfront.net/liveclassvideo.webp" alt="Learning" />
-                <Image style={{opacity: visibilityObject.d.bg}} className="absolute top-1/2 rounded-3xl left-1/2 transform -translate-y-1/2 -translate-x-1/2 h-auto w-[234px]" width={400} height={800} src="https://d1kjns6e6wnqfd.cloudfront.net/snap.webp" alt="Learning" />
+                <Image ref={homeRefImage} className="absolute top-1/2 rounded-3xl left-1/2 transform -translate-y-1/2 -translate-x-1/2 h-auto w-[234px]" width={400} height={800} src="https://d1kjns6e6wnqfd.cloudfront.net/liveclass.webp" alt="Learning" />
+                <Image ref={videoRefImage} className="absolute top-1/2 rounded-3xl left-1/2 transform -translate-y-1/2 -translate-x-1/2 h-auto w-[234px]" width={400} height={800} src={Live} alt="Learning" />
+                <Image ref={newsRefImage} className="absolute top-1/2 rounded-3xl left-1/2 transform -translate-y-1/2 -translate-x-1/2 h-auto w-[234px]" width={400} height={800} src="https://d1kjns6e6wnqfd.cloudfront.net/liveclassvideo.webp" alt="Learning" />
+                <Image ref={blazeRefImage} className="absolute top-1/2 rounded-3xl left-1/2 transform -translate-y-1/2 -translate-x-1/2 h-auto w-[234px]" width={400} height={800} src="https://d1kjns6e6wnqfd.cloudfront.net/snap.webp" alt="Learning" />
               </div>
               <div>
 
@@ -341,9 +464,9 @@ export default function Home() {
               <div className="relative flex-1 max-w-[700px]">
                 <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-start gap-5">
                   <div>
-                    <h2 className={"home-title title-text text-[2.5rem] font-[600]"} style={{opacity: visibilityObject.a.title}}>Comprehensive Learning</h2>
-                    <p className="pt-[5px] text-[1.25rem] text-white tracking-[1px]" style={{opacity: visibilityObject.a.para}}>Every topic. Every concept. Every question.</p>
-                    <p className="pt-[5px] text-[1.25rem] text-white tracking-[1px]" style={{opacity: visibilityObject.a.para}}>India&apos;s most driven teachers have covered it all!</p>
+                    <h2 ref={homeRef} className={"home-title title-text text-[2.5rem] font-[600]"}>Comprehensive Learning</h2>
+                    <p ref={homeRef1} className="pt-[5px] text-[1.25rem] text-white tracking-[1px]">Every topic. Every concept. Every question.</p>
+                    <p ref={homeRef2} className="pt-[5px] text-[1.25rem] text-white tracking-[1px]">India&apos;s most driven teachers have covered it all!</p>
                   </div>
                   <div className="flex items-center gap-4 mt-10">
                     <Image className="h-10 w-auto" src={GooglePlay} alt="Google Play" />
@@ -352,9 +475,9 @@ export default function Home() {
                 </div>
                 <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-start gap-5">
                   <div>
-                    <h2 className={"videos-title title-text text-[2.5rem] font-[600]"} style={{opacity: visibilityObject.b.title}}>Daily Live Classes</h2>
-                    <p className="pt-[5px] text-[1.25rem] text-white tracking-[1px]" style={{opacity: visibilityObject.b.para}}>Being consistent is the key to success.</p>
-                    <p className="pt-[5px] text-[1.25rem] text-white tracking-[1px]" style={{opacity: visibilityObject.b.para}}>So we come live EVERYDAY!</p>
+                    <h2 ref={videoRef} className={"videos-title title-text text-[2.5rem] font-[600]"}>Daily Live Classes</h2>
+                    <p ref={videoRef1} className="pt-[5px] text-[1.25rem] text-white tracking-[1px]">Being consistent is the key to success.</p>
+                    <p ref={videoRef2} className="pt-[5px] text-[1.25rem] text-white tracking-[1px]">So we come live EVERYDAY!</p>
                   </div>
                   <div className="flex items-center gap-4 mt-10">
                     <Image className="h-10 w-auto" src={GooglePlay} alt="Google Play" />
@@ -363,9 +486,9 @@ export default function Home() {
                 </div>
                 <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-start gap-5">
                   <div>
-                    <h2 className={"news-title title-text text-[2.5rem] font-[600]"} style={{opacity: visibilityObject.c.title}}>Interactive Classes</h2>
-                    <p className="pt-[5px] text-[1.25rem] text-white tracking-[1px]" style={{opacity: visibilityObject.c.para}}>Chat with our teachers, take a quiz, learn!</p>
-                    <p className="pt-[5px] text-[1.25rem] text-white tracking-[1px]" style={{opacity: visibilityObject.c.para}}>Your learning style is ours too.</p>
+                    <h2 ref={newsRef} className={"news-title title-text text-[2.5rem] font-[600]"}>Interactive Classes</h2>
+                    <p ref={newsRef1} className="pt-[5px] text-[1.25rem] text-white tracking-[1px]">Chat with our teachers, take a quiz, learn!</p>
+                    <p ref={newsRef2} className="pt-[5px] text-[1.25rem] text-white tracking-[1px]">Your learning style is ours too.</p>
                   </div>
                   <div className="flex items-center gap-4 mt-10">
                     <Image className="h-10 w-auto" src={GooglePlay} alt="Google Play" />
@@ -374,9 +497,9 @@ export default function Home() {
                 </div>
                 <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-start gap-5">
                   <div>
-                    <h2 className={"blaze-title title-text text-[2.5rem] font-[600]"} style={{opacity: visibilityObject.d.title}}>Snap & Learn</h2>
-                    <p className="pt-[5px] text-[1.25rem] text-white tracking-[1px]" style={{opacity: visibilityObject.d.para}}>This is something out of a sci-fi movie!</p>
-                    <p className="pt-[5px] text-[1.25rem] text-white tracking-[1px]" style={{opacity: visibilityObject.d.para}}>Snap and that&apos;s it, we will solve your doubts.</p>
+                    <h2 ref={blazeRef} className={"blaze-title title-text text-[2.5rem] font-[600]"}>Snap & Learn</h2>
+                    <p ref={blazeRef1} className="pt-[5px] text-[1.25rem] text-white tracking-[1px]">This is something out of a sci-fi movie!</p>
+                    <p ref={blazeRef2} className="pt-[5px] text-[1.25rem] text-white tracking-[1px]">Snap and that&apos;s it, we will solve your doubts.</p>
                   </div>
                   <div className="flex items-center gap-4 mt-10">
                     <Image className="h-10 w-auto" src={GooglePlay} alt="Google Play" />
