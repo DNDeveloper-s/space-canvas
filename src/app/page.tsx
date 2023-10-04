@@ -1,7 +1,7 @@
 'use client'
 
 import {useEffect, useRef, useState} from 'react';
-import {useMotionValue, useMotionValueEvent, useScroll} from 'framer-motion';
+import {useAnimationFrame, useMotionValue, useMotionValueEvent, useScroll} from 'framer-motion';
 import Iphone2 from '../assets/images/iPhone2.png';
 import Live from '../assets/images/live.png';
 import AppStore from '../assets/images/app-store.svg';
@@ -29,7 +29,7 @@ const resetObj = {
 }
 
 export default function Home() {
-  const {scrollY} = useScroll();
+  // const {scrollY} = useScroll();
   const [visibilityObject, setVisibilityObject] = useState({
     a: {
       bg: 1,
@@ -41,6 +41,7 @@ export default function Home() {
     c: resetObj,
     d: resetObj
   });
+  const scrollYRef = useRef<number>(0)
   const isFast = useRef(false);
 
   const homeRefBg = useRef<HTMLDivElement>(null);
@@ -67,11 +68,9 @@ export default function Home() {
   const blazeRef1 = useRef<HTMLParagraphElement>(null);
   const blazeRef2 = useRef<HTMLParagraphElement>(null);
 
-  useMotionValueEvent(scrollY, 'change', latestValue => {
-    console.log('latestValue - ', latestValue);
+  useAnimationFrame(() => {
+    const latestValue = scrollYRef.current;
 
-    // let i = 0;
-    // if(cx.getVelocity() < 100) return;
     const innerHeight = window.innerHeight;
     let init = innerHeight + 500;
     let acc = innerHeight + 500;
@@ -89,6 +88,7 @@ export default function Home() {
         para: 1,
         image: 1
       }
+
       // a.bg = getLinearRateNew({
       //   desiredRange: {from: 0, to: 0.9999},
       //   relativeRange: {from: 700, to: 1024},
@@ -118,8 +118,6 @@ export default function Home() {
           acc: latestValue
         });
       }
-
-      console.log('a - ', a);
 
       // setVisibilityObject(c => ({
       //   a,
@@ -365,65 +363,87 @@ export default function Home() {
       //   d
       // }))
     }
-    // if(latestValue > 1536 && latestValue < 1536 + 1024) {
-    //   const a = getLinearRateNew({
-    //     desiredRange: {from: 1, to: 0},
-    //     relativeRange: {from: 1700, to: 2048},
-    //     acc: latestValue
-    //   });
-    //
-    //   const b = getLinearRateNew({
-    //     desiredRange: {from: 0, to: 1},
-    //     relativeRange: {from: 1700, to: 2048},
-    //     acc: latestValue
-    //   });
-    //
-    //   setVisibilityObject({
-    //     a,
-    //     b,
-    //     c: 0,
-    //     d: 0
-    //   })
-    // }
-    // if(latestValue > 1536 + 1024 && latestValue < 1536 + 1024 + 1024) {
-    //   const b = getLinearRateNew({
-    //     desiredRange: {from: 1, to: 0},
-    //     relativeRange: {from: 2700, to: 3072},
-    //     acc: latestValue
-    //   });
-    //
-    //   const c = getLinearRateNew({
-    //     desiredRange: {from: 0, to: 1},
-    //     relativeRange: {from: 2700, to: 3072},
-    //     acc: latestValue
-    //   });
-    //   setVisibilityObject({
-    //     a: 0,
-    //     b,
-    //     c,
-    //     d: 0
-    //   })
-    // }
-    // if(latestValue > 1536 + 1024 + 1024 && latestValue < 1536 + 1024 + 1024 + 1024) {
-    //   const c = getLinearRateNew({
-    //     desiredRange: {from: 1, to: 0},
-    //     relativeRange: {from: 3700, to: 4096},
-    //     acc: latestValue
-    //   });
-    //
-    //   const d = getLinearRateNew({
-    //     desiredRange: {from: 0, to: 1},
-    //     relativeRange: {from: 3700, to: 4096},
-    //     acc: latestValue
-    //   });
-    //   setVisibilityObject({
-    //     a: 0,
-    //     b: 0,
-    //     c,
-    //     d
-    //   })
-    // }
   })
+
+  // useMotionValueEvent(scrollY, 'change', latestValue => {
+  //   console.log('latestValue - ', latestValue);
+  //
+  //   scrollYRef.current = latestValue;
+  //
+  //   // let i = 0;
+  //   // if(cx.getVelocity() < 100) return;
+  //
+  //   // if(latestValue > 1536 && latestValue < 1536 + 1024) {
+  //   //   const a = getLinearRateNew({
+  //   //     desiredRange: {from: 1, to: 0},
+  //   //     relativeRange: {from: 1700, to: 2048},
+  //   //     acc: latestValue
+  //   //   });
+  //   //
+  //   //   const b = getLinearRateNew({
+  //   //     desiredRange: {from: 0, to: 1},
+  //   //     relativeRange: {from: 1700, to: 2048},
+  //   //     acc: latestValue
+  //   //   });
+  //   //
+  //   //   setVisibilityObject({
+  //   //     a,
+  //   //     b,
+  //   //     c: 0,
+  //   //     d: 0
+  //   //   })
+  //   // }
+  //   // if(latestValue > 1536 + 1024 && latestValue < 1536 + 1024 + 1024) {
+  //   //   const b = getLinearRateNew({
+  //   //     desiredRange: {from: 1, to: 0},
+  //   //     relativeRange: {from: 2700, to: 3072},
+  //   //     acc: latestValue
+  //   //   });
+  //   //
+  //   //   const c = getLinearRateNew({
+  //   //     desiredRange: {from: 0, to: 1},
+  //   //     relativeRange: {from: 2700, to: 3072},
+  //   //     acc: latestValue
+  //   //   });
+  //   //   setVisibilityObject({
+  //   //     a: 0,
+  //   //     b,
+  //   //     c,
+  //   //     d: 0
+  //   //   })
+  //   // }
+  //   // if(latestValue > 1536 + 1024 + 1024 && latestValue < 1536 + 1024 + 1024 + 1024) {
+  //   //   const c = getLinearRateNew({
+  //   //     desiredRange: {from: 1, to: 0},
+  //   //     relativeRange: {from: 3700, to: 4096},
+  //   //     acc: latestValue
+  //   //   });
+  //   //
+  //   //   const d = getLinearRateNew({
+  //   //     desiredRange: {from: 0, to: 1},
+  //   //     relativeRange: {from: 3700, to: 4096},
+  //   //     acc: latestValue
+  //   //   });
+  //   //   setVisibilityObject({
+  //   //     a: 0,
+  //   //     b: 0,
+  //   //     c,
+  //   //     d
+  //   //   })
+  //   // }
+  // })
+
+  useEffect(() => {
+    function handleScroll(e: Event) {
+      if(e.currentTarget) {
+        scrollYRef.current = e.currentTarget.scrollY;
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [])
 
   return (
     <main>
