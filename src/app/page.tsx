@@ -10,6 +10,7 @@ import Image from 'next/image';
 import {LinearRateOptions} from '@/helpers/canvas';
 import {Simulate} from 'react-dom/test-utils';
 import reset = Simulate.reset;
+import {late} from 'zod';
 
 function getLinearRateNew(options: LinearRateOptions) {
   const x = (options.desiredRange.from - options.desiredRange.to) / (options.relativeRange.from - options.relativeRange.to);
@@ -29,7 +30,6 @@ const resetObj = {
 
 export default function Home() {
   const {scrollY} = useScroll();
-  const cx = useMotionValue(0);
   const [visibilityObject, setVisibilityObject] = useState({
     a: {
       bg: 1,
@@ -67,32 +67,22 @@ export default function Home() {
   const blazeRef1 = useRef<HTMLParagraphElement>(null);
   const blazeRef2 = useRef<HTMLParagraphElement>(null);
 
-  useEffect(() => {
-    function handleWheel(e: WheelEvent) {
-      console.log('e - ', e.deltaMode, e.deltaY);
-      // isFast.current = e.deltaY > 80;
-      cx.set(e.deltaY);
-    }
-
-    window.addEventListener('wheel', handleWheel);
-
-    return () => {
-      window.removeEventListener('wheel', handleWheel);
-    }
-  }, []);
-
   useMotionValueEvent(scrollY, 'change', latestValue => {
-    console.log('latestValue - ', latestValue, cx.getVelocity());
+    console.log('latestValue - ', latestValue);
 
     // let i = 0;
     // if(cx.getVelocity() < 100) return;
+    const innerHeight = window.innerHeight;
+    let init = innerHeight + 500;
+    let acc = innerHeight + 500;
 
     if(!homeRef.current || !homeRefBg.current || !homeRefImage.current || !homeRef1.current || !homeRef2.current) return;
     if(!videoRef.current || !videoRefBg.current || !videoRefImage.current || !videoRef1.current || !videoRef2.current) return;
     if(!newsRef.current || !newsRefBg.current || !newsRefImage.current || !newsRef1.current || !newsRef2.current) return;
     if(!blazeRef.current || !blazeRefBg.current || !blazeRefImage.current || !blazeRef1.current || !blazeRef2.current) return;
 
-    if(latestValue < 1400) {
+
+    if(latestValue < init) {
       let a ={
         bg: 1,
         title: 1,
@@ -115,16 +105,16 @@ export default function Home() {
       //   acc: latestValue
       // });
 
-      if(latestValue > 1350) {
+      if(latestValue > init-50) {
         a.title = a.para = getLinearRateNew({
           desiredRange: {from: 0.9999, to: 0},
-          relativeRange: {from: 1350, to: 1400},
+          relativeRange: {from: init-50, to: init},
           acc: latestValue
         });
 
         a.bg = getLinearRateNew({
           desiredRange: {from: 0.9999, to: 0},
-          relativeRange: {from: 1350, to: 1400},
+          relativeRange: {from: init-50, to: init},
           acc: latestValue
         });
       }
@@ -161,7 +151,7 @@ export default function Home() {
       blazeRef1.current.style.opacity = '0';
       blazeRef2.current.style.opacity = '0';
     }
-    if(latestValue > 1400 && latestValue < 2100) {
+    if(latestValue > init && latestValue < init+acc) {
       let b = {
         bg: 1,
         title: 1,
@@ -170,33 +160,34 @@ export default function Home() {
       }
       b.bg = getLinearRateNew({
         desiredRange: {from: 0, to: 0.9999},
-        relativeRange: {from: 1400, to: 1450},
+        relativeRange: {from: init, to: init+50},
         acc: latestValue
       });
       b.title = getLinearRateNew({
         desiredRange: {from: 0, to: 0.9999},
-        relativeRange: {from: 1400, to: 1450},
+        relativeRange: {from: init, to: init+50},
         acc: latestValue
       });
       b.para = getLinearRateNew({
         desiredRange: {from: 0, to: 0.9999},
-        relativeRange: {from: 1440, to: 1500},
+        relativeRange: {from: init+40, to: init+100},
         acc: latestValue
       });
 
 
-      if(latestValue > 1850) {
+      if(latestValue > init+acc-50) {
         b.title = b.para = getLinearRateNew({
           desiredRange: {from: 0.9999, to: 0},
-          relativeRange: {from: 1850, to: 1900},
+          relativeRange: {from: init+acc-50, to: init+acc},
           acc: latestValue
         });
 
         b.bg = getLinearRateNew({
           desiredRange: {from: 0.9999, to: 0},
-          relativeRange: {from: 1850, to: 1900},
+          relativeRange: {from: init+acc-50, to: init+acc},
           acc: latestValue
         });
+        // init = init+500;
       }
 
       homeRef.current.style.opacity = '0'
@@ -231,7 +222,8 @@ export default function Home() {
       // }))
     }
 
-    if(latestValue > 1900 && latestValue < 1536 + 1024 + 1024) {
+    if(latestValue > init+acc && latestValue < init + (acc * 2)) {
+      init = init+acc;
       let c = {
         bg: 1,
         title: 1,
@@ -240,31 +232,31 @@ export default function Home() {
       }
       c.bg = getLinearRateNew({
         desiredRange: {from: 0, to: 0.9999},
-        relativeRange: {from: 1900, to: 1950},
+        relativeRange: {from: init, to: init+50},
         acc: latestValue
       });
       c.title = getLinearRateNew({
         desiredRange: {from: 0, to: 0.9999},
-        relativeRange: {from: 1900, to: 1950},
+        relativeRange: {from: init, to: init+50},
         acc: latestValue
       });
       c.para = getLinearRateNew({
         desiredRange: {from: 0, to: 0.9999},
-        relativeRange: {from: 1940, to: 2000},
+        relativeRange: {from: init+40, to: init+100},
         acc: latestValue
       });
 
 
-      if(latestValue > 2350) {
+      if(latestValue > init+acc-50) {
         c.title = c.para = getLinearRateNew({
           desiredRange: {from: 0.9999, to: 0},
-          relativeRange: {from: 2350, to: 2400},
+          relativeRange: {from: init+acc-50, to: init+acc},
           acc: latestValue
         });
 
         c.bg = getLinearRateNew({
           desiredRange: {from: 0.9999, to: 0},
-          relativeRange: {from: 2350, to: 2400},
+          relativeRange: {from: init+acc-50, to: init+acc},
           acc: latestValue
         });
       }
@@ -300,8 +292,9 @@ export default function Home() {
       //   d: resetObj
       // }))
     }
-
-    if(latestValue > 2400 && latestValue < 1536 + 1024 + 1024 + 1024) {
+    //
+    if(latestValue > init + (acc * 2)) {
+      init = init + (acc * 2);
       let d = {
         bg: 1,
         title: 1,
@@ -310,17 +303,17 @@ export default function Home() {
       }
       d.bg = getLinearRateNew({
         desiredRange: {from: 0, to: 0.9999},
-        relativeRange: {from: 2400, to: 2450},
+        relativeRange: {from: init, to: init+50},
         acc: latestValue
       });
       d.title = getLinearRateNew({
         desiredRange: {from: 0, to: 0.9999},
-        relativeRange: {from: 2400, to: 2450},
+        relativeRange: {from: init, to: init+50},
         acc: latestValue
       });
       d.para = getLinearRateNew({
         desiredRange: {from: 0, to: 0.9999},
-        relativeRange: {from: 2440, to: 2500},
+        relativeRange: {from: init+40, to: init+100},
         acc: latestValue
       });
 
@@ -435,7 +428,7 @@ export default function Home() {
   return (
     <main>
       <div className="w-screen h-screen bg-white" />
-      <div className="w-screen h-[350vh]">
+      <div className="w-screen h-[600vh]">
         <div className="sticky top-0 left-0 w-screen h-[100vh]">
           <div className="absolute w-screen h-screen top-0 flex justify-between items-center left-0 z-50">
             <div ref={homeRefBg} className="absolute top-1/2 left-1/2 transform rounded-full -translate-x-1/2 -translate-y-1/2 home-bg w-[80%] h-[80%]" />
