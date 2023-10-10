@@ -7,7 +7,7 @@ interface Coords {
 
 type Velocity = Coords;
 
-function randomIntFromInterval(min: number, max: number) { // min and max included
+export function randomIntFromInterval(min: number, max: number) { // min and max included
 	return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
@@ -17,7 +17,7 @@ interface Range {
 	to: number;
 }
 
-export interface LinearRateOptions {
+interface LinearRateOptions {
 	desiredRange: Range;
 	relativeRange: Range;
 	acc: number;
@@ -51,9 +51,8 @@ export function getLinearRateNew(options: LinearRateOptions) {
 // 	return val;
 // }
 
-export const runCanvasScript = (canvas: HTMLCanvasElement) => {
+export const runCanvasScript = (canvas: HTMLCanvasElement, innerWidth = document.body.clientWidth, innerHeight = visualViewport.height) => {
 	const c = canvas.getContext('2d');
-
 
 	canvas.width = innerWidth;
 	canvas.height = innerHeight;
@@ -66,10 +65,6 @@ export const runCanvasScript = (canvas: HTMLCanvasElement) => {
 	}
 
 	const colors = ['#7f71c5', '#d6d7d7', '#D6D7D7FF', '#D6D7D7FF', '#D6D7D7FF', '#D6D7D7FF', '#266cb2', '#69cc7b', '#ebae70', '#dde0e4', '#D6D7D7FF', '#D6D7D7FF', '#D6D7D7FF', '#dde0e4', '#dde0e4', '#dde0e4', '#dde0e4', '#b4a866'];
-	// const c = '#7f71c5';
-	// const c = '#69cc7b';
-	// const c = '#266cb2';
-	// const c = '#ebae70';
 	// const colors = ['#053B50', '#407cba', '#64CCC5', '#EEEEEE'];
 	// const colors = ['#E5D283', '#176B87', '#64CCC5', '#EEEEEE', '#EEEEEE', '#EEEEEE', '#EEEEEE'];
 	// const colors = ['#451952', '#662549', '#AE445A', '#F39F5A'];
@@ -87,7 +82,7 @@ export const runCanvasScript = (canvas: HTMLCanvasElement) => {
 	const fl = canvas.width / 3.5;
 	const centerX = canvas.width / 2;
 	const centerY = canvas.height / 2;
-	let initialSpeed = 1;
+	let initialSpeed = window.innerWidth < 600 ? 0.45 : 0.91;
 	let speed = initialSpeed;
 
 	// addEventListener('scroll', e => {
@@ -96,7 +91,12 @@ export const runCanvasScript = (canvas: HTMLCanvasElement) => {
 	// })
 
 	scroll(progress => {
-		speed = progress * 90 + initialSpeed;
+		// speed = progress * 90 + initialSpeed;
+		speed = getLinearRateNew({
+			desiredRange: {from: initialSpeed, to: 10},
+			relativeRange: {from: 0, to: 600},
+			acc: progress * document.body.scrollHeight
+		});
 	})
 
 	class Particle {
@@ -106,7 +106,7 @@ export const runCanvasScript = (canvas: HTMLCanvasElement) => {
 		startZ;
 		// color = '#ff5e4c';
 		color = colors[randomIntFromInterval(0, colors.length - 1)];
-		size = randomIntFromInterval(0.4, 2.5);
+		size =  window.innerWidth < 600 ? randomIntFromInterval(0.2, 1.1) : randomIntFromInterval(0.4, 2.5);
 		constructor() {
 			this.startZ = this.z;
 		}
@@ -178,7 +178,7 @@ export const runCanvasScript = (canvas: HTMLCanvasElement) => {
 	function init() {
 		particles = [];
 
-		const particleCount = 900;
+		const particleCount = window.innerWidth > 900 ? 900 : window.innerWidth;
 		const angleIncrement = Math.PI * 2 / particleCount;
 
 		for (let i = 0; i < particleCount; i++) {

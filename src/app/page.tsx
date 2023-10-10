@@ -1,487 +1,251 @@
 'use client'
 
-import {useEffect, useRef, useState} from 'react';
+import {useContext, useEffect, useRef, useState} from 'react';
 import {useAnimationFrame, useMotionValue, useMotionValueEvent, useScroll} from 'framer-motion';
-import Iphone2 from '../assets/images/iPhone2.png';
-import Live from '../assets/images/live.png';
-import AppStore from '../assets/images/app-store.svg';
-import GooglePlay from '../assets/images/google-play.svg';
+import logowhite from '../assets/images/logo-white.webp';
 import Image from 'next/image';
-import {LinearRateOptions} from '@/helpers/canvas';
+import {getLinearRateNew, runCanvasScript} from '@/helpers/canvas';
 import {Simulate} from 'react-dom/test-utils';
+import Typist from "react-typist-component";
 import reset = Simulate.reset;
-import {late} from 'zod';
+import {late, set} from 'zod';
+import MobileViewSection from '@/app/MobileViewSection';
+import LandingScrollSection from '@/app/LandingScrollSection';
 
-function getLinearRateNew(options: LinearRateOptions) {
-  const x = (options.desiredRange.from - options.desiredRange.to) / (options.relativeRange.from - options.relativeRange.to);
-  const y = options.desiredRange.to - (options.relativeRange.to * x);
-  let val = (options.acc * x) + y;
-  if(options.acc < options.relativeRange.from) val = options.desiredRange.from;
-  if(options.acc > options.relativeRange.to) val = options.desiredRange.to;
-  return val;
-}
-
-const resetObj = {
-  bg: 0,
-  title: 0,
-  para: 0,
-  image: 0
-}
-
+const items = ['home', 'videos', 'news', 'blaze'];
+let isSliderOpen = false;
 export default function Home() {
+  const [canPlay, setCanPlay] = useState(false);
+  // const [showLandingPage, setShowLandingPage] = useContext(IntroContext).showLandingPage;
   const {scrollY} = useScroll();
-  const [visibilityObject, setVisibilityObject] = useState({
-    a: {
-      bg: 1,
-      title: 1,
-      para: 1,
-      image: 1
-    },
-    b: resetObj,
-    c: resetObj,
-    d: resetObj
-  });
-  const scrollYRef = useRef<number>(0)
-  const isFast = useRef(false);
-
-  const homeRefBg = useRef<HTMLDivElement>(null);
-  const homeRefImage = useRef<HTMLImageElement>(null);
-  const homeRef = useRef<HTMLHeadingElement>(null);
-  const homeRef1 = useRef<HTMLParagraphElement>(null);
-  const homeRef2 = useRef<HTMLParagraphElement>(null);
-
-  const videoRefBg = useRef<HTMLDivElement>(null);
-  const videoRefImage = useRef<HTMLImageElement>(null);
-  const videoRef = useRef<HTMLHeadingElement>(null);
-  const videoRef1 = useRef<HTMLParagraphElement>(null);
-  const videoRef2 = useRef<HTMLParagraphElement>(null);
-
-  const newsRefBg = useRef<HTMLDivElement>(null);
-  const newsRefImage = useRef<HTMLImageElement>(null);
-  const newsRef = useRef<HTMLHeadingElement>(null);
-  const newsRef1 = useRef<HTMLParagraphElement>(null);
-  const newsRef2 = useRef<HTMLParagraphElement>(null);
-
-  const blazeRefBg = useRef<HTMLDivElement>(null);
-  const blazeRefImage = useRef<HTMLImageElement>(null);
-  const blazeRef = useRef<HTMLHeadingElement>(null);
-  const blazeRef1 = useRef<HTMLParagraphElement>(null);
-  const blazeRef2 = useRef<HTMLParagraphElement>(null);
+  const [animateValue, setAnimateValue] = useState({transform: 1, opacity: 1, blur: 0, circleOpacity: 0, navBg: 0});
+  const [opacityValue, setOpacityValue] = useState(1);
+  const [typistKey, setTypistKey] = useState(1);
+  // const [animateValue, setAnimateValue] = useState({transform: 1, opacity: 1});
+  const startRGB = 'rgb(14, 21, 37)';
+  const [RGB, setRGB] = useState([14, 21, 37]);
+  const comp = useRef<HTMLDivElement>(null);
+  const scrollSectionRef = useRef(null);
 
   useMotionValueEvent(scrollY, 'change', latestValue => {
-
+    if(!scrollSectionRef.current) return;
     console.log('latestValue - ', latestValue);
+    {
+      const transformVal = getLinearRateNew({
+        desiredRange: {from: 1, to: 2.3},
+        relativeRange: {from: 0, to: 300},
+        acc: latestValue
+      });
+      // const opacityVal = getLinearRateNew(1, 0, 0, 300, latestValue);
+      const opacityVal = getLinearRateNew({
+        desiredRange: {from: 1, to: 0},
+        relativeRange: {from: 0, to: 300},
+        acc: latestValue
+      });
+      // const blurVal = getLinearRateNew(0, 10, 1100, 1240, latestValue);
+      const blurVal = getLinearRateNew({
+        desiredRange: {from: 0, to: 10},
+        relativeRange: {from: 1100, to: 1240},
+        acc: latestValue
+      });
 
-    const innerHeight = window.innerHeight;
-    let init = innerHeight + 500;
-    let acc = innerHeight / 1.3;
+      const offsetTop = scrollSectionRef.current.offsetTop;
+      const range = {from: 200, to: offsetTop};
 
-    if(!homeRefBg.current || !homeRefImage.current) return;
-    if(!videoRefBg.current || !videoRefImage.current) return;
-    if(!newsRefBg.current || !newsRefImage.current) return;
-    if(!blazeRefBg.current || !blazeRefImage.current) return;
+      const rVal = getLinearRateNew({
+        desiredRange: {from: 14, to: 0},
+        relativeRange: range,
+        acc: latestValue
+      });
 
+      const gVal = getLinearRateNew({
+        desiredRange: {from: 21, to: 0},
+        relativeRange: range,
+        acc: latestValue
+      });
 
-    // if(!homeRef.current || !homeRefBg.current || !homeRefImage.current || !homeRef1.current || !homeRef2.current) return;
-    // if(!videoRef.current || !videoRefBg.current || !videoRefImage.current || !videoRef1.current || !videoRef2.current) return;
-    // if(!newsRef.current || !newsRefBg.current || !newsRefImage.current || !newsRef1.current || !newsRef2.current) return;
-    // if(!blazeRef.current || !blazeRefBg.current || !blazeRefImage.current || !blazeRef1.current || !blazeRef2.current) return;
+      const bVal = getLinearRateNew({
+        desiredRange: {from: 37, to: 0},
+        relativeRange: range,
+        acc: latestValue
+      });
 
+      const circleOpacityVal = getLinearRateNew({
+        desiredRange: {from: 0, to: 1},
+        relativeRange: {from: 2250, to: 2500},
+        acc: latestValue
+      });
 
-    if(latestValue < init) {
-      let a ={
-        bg: 1,
-        // title: 1,
-        // para: 1,
-        image: 1
-      }
+      const navBgVal = getLinearRateNew({
+        desiredRange: {from: 0, to: 1},
+        relativeRange: range,
+        acc: latestValue
+      });
 
-      // a.bg = getLinearRateNew({
-      //   desiredRange: {from: 0, to: 0.9999},
-      //   relativeRange: {from: 700, to: 1024},
-      //   acc: latestValue
-      // });
-      // a.title = getLinearRateNew({
-      //   desiredRange: {from: 0, to: 0.9999},
-      //   relativeRange: {from: 536, to: 950},
-      //   acc: latestValue
-      // });
-      // a.para = getLinearRateNew({
-      //   desiredRange: {from: 0, to: 0.9999},
-      //   relativeRange: {from: 930, to: 1000},
-      //   acc: latestValue
-      // });
+      setAnimateValue({
+        transform: transformVal,
+        opacity: opacityVal,
+        blur: blurVal,
+        circleOpacity: circleOpacityVal,
+        navBg: navBgVal
+      })
 
-      if(latestValue > init-50) {
-        // a.title = a.para = getLinearRateNew({
-        //   desiredRange: {from: 0.9999, to: 0},
-        //   relativeRange: {from: init-50, to: init},
-        //   acc: latestValue
-        // });
-        if(latestValue > init) a.bg = a.title = a.para = 0;
-        else a.bg = a.title = a.para = 1;
+      setOpacityValue(opacityVal);
 
-        // a.bg = getLinearRateNew({
-        //   desiredRange: {from: 0.9999, to: 0},
-        //   relativeRange: {from: init-50, to: init},
-        //   acc: latestValue
-      }
-
-      // setVisibilityObject(c => ({
-      //   a,
-      //   b: resetObj,
-      //   c: resetObj,
-      //   d: resetObj
-      // }))
-      // homeRef.current.style.opacity = a.title.toString();
-      homeRefBg.current.style.opacity = a.bg.toString();
-      homeRefImage.current.style.opacity = a.bg.toString();
-      // homeRef1.current.style.opacity = a.para.toString();
-      // homeRef2.current.style.opacity = a.para.toString();
-
-      // videoRef.current.style.opacity = '0';
-      videoRefBg.current.style.opacity = '0';
-      videoRefImage.current.style.opacity = '0';
-      // videoRef1.current.style.opacity = '0';
-      // videoRef2.current.style.opacity = '0';
-
-      // newsRef.current.style.opacity = '0';
-      newsRefBg.current.style.opacity = '0';
-      newsRefImage.current.style.opacity = '0';
-      // newsRef1.current.style.opacity = '0';
-      // newsRef2.current.style.opacity = '0';
-
-      // blazeRef.current.style.opacity = '0';
-      blazeRefBg.current.style.opacity = '0';
-      blazeRefImage.current.style.opacity = '0';
-      // blazeRef1.current.style.opacity = '0';
-      // blazeRef2.current.style.opacity = '0';
+      setRGB([rVal, gVal, bVal]);
     }
-    if(latestValue > init && latestValue < init+acc) {
-      let b = {
-        bg: 1,
-        // title: 1,
-        // para: 1,
-        image: 1
-      }
-
-
-      // b.bg = getLinearRateNew({
-      //   desiredRange: {from: 0, to: 0.9999},
-      //   relativeRange: {from: init, to: init+50},
-      //   acc: latestValue
-      // });
-      // b.title = getLinearRateNew({
-      //   desiredRange: {from: 0, to: 0.9999},
-      //   relativeRange: {from: init, to: init+50},
-      //   acc: latestValue
-      // });
-      // b.para = getLinearRateNew({
-      //   desiredRange: {from: 0, to: 0.9999},
-      //   relativeRange: {from: init+40, to: init+100},
-      //   acc: latestValue
-      // });
-      //
-      //
-      // if(latestValue > init+acc-50) {
-      //   b.title = b.para = getLinearRateNew({
-      //     desiredRange: {from: 0.9999, to: 0},
-      //     relativeRange: {from: init+acc-50, to: init+acc},
-      //     acc: latestValue
-      //   });
-      //
-      //   b.bg = getLinearRateNew({
-      //     desiredRange: {from: 0.9999, to: 0},
-      //     relativeRange: {from: init+acc-50, to: init+acc},
-      //     acc: latestValue
-      //   });
-      //   // init = init+500;
-      // }
-
-      // homeRef.current.style.opacity = '0'
-      homeRefBg.current.style.opacity = '0'
-      homeRefImage.current.style.opacity = '0'
-      // homeRef1.current.style.opacity = '0'
-      // homeRef2.current.style.opacity = '0'
-
-      // videoRef.current.style.opacity = b.title.toString();
-      videoRefBg.current.style.opacity = b.bg.toString();
-      videoRefImage.current.style.opacity = b.bg.toString();
-      // videoRef1.current.style.opacity = b.para.toString();
-      // videoRef2.current.style.opacity = b.para.toString();
-
-      // newsRef.current.style.opacity = '0';
-      newsRefBg.current.style.opacity = '0';
-      newsRefImage.current.style.opacity = '0';
-      // newsRef1.current.style.opacity = '0';
-      // newsRef2.current.style.opacity = '0';
-
-      // blazeRef.current.style.opacity = '0';
-      blazeRefBg.current.style.opacity = '0';
-      blazeRefImage.current.style.opacity = '0';
-      // blazeRef1.current.style.opacity = '0';
-      // blazeRef2.current.style.opacity = '0';
-
-      // setVisibilityObject(c => ({
-      //   a: resetObj,
-      //   b,
-      //   c: resetObj,
-      //   d: resetObj
-      // }))
-    }
-
-    if(latestValue > init+acc && latestValue < init + (acc * 2.5)) {
-      init = init+acc;
-      let c = {
-        bg: 1,
-        title: 1,
-        para: 1,
-        image: 1
-      }
-      // if(latestValue > init && latestValue < init + acc) c.bg = c.title = c.para = 1;
-      // else c.bg = c.title = c.para = 0;
-      // c.bg = getLinearRateNew({
-      //   desiredRange: {from: 0, to: 0.9999},
-      //   relativeRange: {from: init, to: init+50},
-      //   acc: latestValue
-      // });
-      // c.title = getLinearRateNew({
-      //   desiredRange: {from: 0, to: 0.9999},
-      //   relativeRange: {from: init, to: init+50},
-      //   acc: latestValue
-      // });
-      // c.para = getLinearRateNew({
-      //   desiredRange: {from: 0, to: 0.9999},
-      //   relativeRange: {from: init+40, to: init+100},
-      //   acc: latestValue
-      // });
-      //
-      //
-      // if(latestValue > init+acc-50) {
-      //   c.title = c.para = getLinearRateNew({
-      //     desiredRange: {from: 0.9999, to: 0},
-      //     relativeRange: {from: init+acc-50, to: init+acc},
-      //     acc: latestValue
-      //   });
-      //
-      //   c.bg = getLinearRateNew({
-      //     desiredRange: {from: 0.9999, to: 0},
-      //     relativeRange: {from: init+acc-50, to: init+acc},
-      //     acc: latestValue
-      //   });
-      // }
-
-      // homeRef.current.style.opacity = '0'
-      homeRefBg.current.style.opacity = '0'
-      homeRefImage.current.style.opacity = '0'
-      // homeRef1.current.style.opacity = '0'
-      // homeRef2.current.style.opacity = '0'
-
-      // videoRef.current.style.opacity = '0';
-      videoRefBg.current.style.opacity = '0';
-      videoRefImage.current.style.opacity = '0';
-      // videoRef1.current.style.opacity = '0';
-      // videoRef2.current.style.opacity = '0';
-
-      // newsRef.current.style.opacity = c.title.toString();
-      newsRefBg.current.style.opacity = c.bg.toString();
-      newsRefImage.current.style.opacity = c.bg.toString();
-      // newsRef1.current.style.opacity = c.para.toString();
-      // newsRef2.current.style.opacity = c.para.toString();
-
-      // blazeRef.current.style.opacity = '0';
-      blazeRefBg.current.style.opacity = '0';
-      blazeRefImage.current.style.opacity = '0';
-      // blazeRef1.current.style.opacity = '0';
-      // blazeRef2.current.style.opacity = '0';
-
-      // setVisibilityObject(_c => ({
-      //   a: resetObj,
-      //   b: resetObj,
-      //   c,
-      //   d: resetObj
-      // }))
-    }
-    //
-    if(latestValue > init + (acc * 2.5)) {
-      init = init + (acc * 2);
-      let d = {
-        bg: 1,
-        title: 1,
-        para: 1,
-        image: 1
-      }
-      // if(latestValue > init) d.bg = d.title = d.para = 1;
-      // else c.bg = c.title = c.para = 0;
-      // d.bg = getLinearRateNew({
-      //   desiredRange: {from: 0, to: 0.9999},
-      //   relativeRange: {from: init, to: init+50},
-      //   acc: latestValue
-      // });
-      // d.title = getLinearRateNew({
-      //   desiredRange: {from: 0, to: 0.9999},
-      //   relativeRange: {from: init, to: init+50},
-      //   acc: latestValue
-      // });
-      // d.para = getLinearRateNew({
-      //   desiredRange: {from: 0, to: 0.9999},
-      //   relativeRange: {from: init+40, to: init+100},
-      //   acc: latestValue
-      // });
-
-
-      // if(latestValue > 2270 + 1024 - 200) {
-      //   d.title = d.para = getLinearRateNew({
-      //     desiredRange: {from: 0.9999, to: 0},
-      //     relativeRange: {from: 2270 + 1024 + 1024 - 200, to: 2400 + 1024 + 1024 - 200 + 200},
-      //     acc: latestValue
-      //   });
-      //
-      //   d.bg = getLinearRateNew({
-      //     desiredRange: {from: 0.9999, to: 0},
-      //     relativeRange: {from: 2400 + 1024 + 1024, to: 2560 + 1024 + 1024 + 200},
-      //     acc: latestValue
-      //   });
-      // }
-
-
-      // homeRef.current.style.opacity = '0'
-      homeRefBg.current.style.opacity = '0'
-      homeRefImage.current.style.opacity = '0'
-      // homeRef1.current.style.opacity = '0'
-      // homeRef2.current.style.opacity = '0'
-
-      // videoRef.current.style.opacity = '0';
-      videoRefBg.current.style.opacity = '0';
-      videoRefImage.current.style.opacity = '0';
-      // videoRef1.current.style.opacity = '0';
-      // videoRef2.current.style.opacity = '0';
-
-      // newsRef.current.style.opacity = '0';
-      newsRefBg.current.style.opacity = '0';
-      newsRefImage.current.style.opacity = '0';
-      // newsRef1.current.style.opacity = '0';
-      // newsRef2.current.style.opacity = '0';
-
-      // blazeRef.current.style.opacity = d.title.toString();
-      blazeRefBg.current.style.opacity = d.bg.toString();
-      blazeRefImage.current.style.opacity = d.bg.toString();
-      // blazeRef1.current.style.opacity = d.para.toString();
-      // blazeRef2.current.style.opacity = d.para.toString();
-
-
-      // setVisibilityObject(_c => ({
-      //   a: resetObj,
-      //   b: resetObj,
-      //   c: resetObj,
-      //   d
-      // }))
-    }
-  })
+  });
 
   useEffect(() => {
-    function handleScroll(e: Event) {
-      if(e.currentTarget) {
-        scrollYRef.current = e.currentTarget.scrollY;
-      }
-    }
+    const canvasEl = document.getElementById('space-canvas');
 
-    window.addEventListener('scroll', handleScroll);
+    let regexp = /android|iphone|kindle|ipad/i;
+    /* Using test() method to search regexp in details
+    it returns boolean value*/
+    let details = navigator.userAgent;
+    let isMobileDevice = regexp.test(details);
 
-    return () => window.removeEventListener('scroll', handleScroll);
+    if(canvasEl) runCanvasScript(canvasEl, innerWidth, isMobileDevice ? screen.availHeight : innerHeight);
   }, [])
 
   return (
-    <main>
-      <div className="w-screen h-screen bg-white" style={{scrollSnapAlign: 'start', scrollSnapStop: 'always'}} />
-      <div className="w-screen h-[400vh]">
-        <div className="w-screen relative max-w-[800px] mx-auto flex justify-between h-full">
-          <div className="h-screen sticky top-0 flex justify-center items-center w-[270px] z-50">
-            <Image className="relative top-0 w-full" src={Iphone2} alt="Iphone" />
-            <Image ref={homeRefImage} className="absolute top-1/2 rounded-3xl left-1/2 transform -translate-y-1/2 -translate-x-1/2 h-auto w-[234px]" width={400} height={800} src="https://d1kjns6e6wnqfd.cloudfront.net/liveclass.webp" alt="Learning" />
-            <Image ref={videoRefImage} className="absolute top-1/2 rounded-3xl left-1/2 transform -translate-y-1/2 -translate-x-1/2 h-auto w-[234px]" width={400} height={800} src={Live} alt="Learning" />
-            <Image ref={newsRefImage} className="absolute top-1/2 rounded-3xl left-1/2 transform -translate-y-1/2 -translate-x-1/2 h-auto w-[234px]" width={400} height={800} src="https://d1kjns6e6wnqfd.cloudfront.net/liveclassvideo.webp" alt="Learning" />
-            <Image ref={blazeRefImage} className="absolute top-1/2 rounded-3xl left-1/2 transform -translate-y-1/2 -translate-x-1/2 h-auto w-[234px]" width={400} height={800} src="https://d1kjns6e6wnqfd.cloudfront.net/snap.webp" alt="Learning" />
+    <>
+      <nav className="nav__wrapper" style={{background: `rgba(0,0,0,0)`}}>
+            <span className="nav__logo">
+              <Image height={100} width={100} className="nav__logo__img" src={logowhite} alt="Pustack Logo" />
+              {/*<img*/}
+              {/*  src={logowhite}*/}
+              {/*  alt="Pustack Logo"*/}
+              {/*  draggable={false}*/}
+              {/*  className="nav__logo__img"*/}
+              {/*  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}*/}
+              {/*/>*/}
+            </span>
+
+        <span className="nav__links">
+              {/*<a href="https://tutor.pustack.com">Tutor Login</a>*/}
+          <span
+            className="explore_classroom"
+            style={{boxShadow: RGB[0] === 0 ? '0 0 32px #0079F2' : 'none', background: RGB[0] === 0 ? '#0079F2' : '#0053A6'}}
+            onClick={() => {
+              // setIsSliderOpen(true);
+              // navigator && navigator.vibrate && navigator.vibrate(5);
+              // setShowLandingPage(false);
+              // history.push('/auth?step=login');
+            }}
+          >
+                Access Classroom
+              </span>
+            </span>
+      </nav>
+      <div className="space-wars-bg" ref={comp} style={{filter: `blur(${animateValue.blur}px)`, opacity: RGB[0] === 0 ? 0 : 1}}>
+        {/*<canvas id="space-canvas" style={{background: `rgb(${RGB.join(',')})`}}></canvas>*/}
+        <div className="mac__text">
+          <div style={{transformOrigin: '50% 80% 0px', opacity: opacityValue, transform: `scale(${animateValue.transform})`}}>
+            <h2>Learning should be</h2>
+            <h1 style={{
+              position: 'relative'
+            }}>
+              <h1 style={{
+                position: "relative",
+                opacity: 0,
+                pointerEvents: 'none'
+              }}>intuitive</h1>
+              <h1 style={{
+                position: "absolute",
+                top: 0,
+                left: '50%',
+                transform: 'translateX(-50%)'
+              }}>
+                {isSliderOpen ? (
+                  "fun"
+                ) : (
+                  // <Typewriter
+                  //   options={{
+                  //     strings: ["intuitive", "fun", "accessible", "affordable"],
+                  //     autoStart: true,
+                  //     loop: true,
+                  //     delay: 45,
+                  //   }}
+                  // />
+                  <Typist
+                    startDelay={0}
+                    cursor={<span style={{color: 'white'}}>|</span>}
+                    // cursor={{
+                    // 	show: false,
+                    // 	blink: false,
+                    // 	element: "|",
+                    // 	hideWhenDone: true,
+                    // 	hideWhenDoneDelay: 500,
+                    // }}
+                    typingDelay={100}
+                    loop={true}
+                    key={typistKey}
+                    onTypingDone={() => setTypistKey(c => c >= 4 ? 1 : c + 1)}
+                  >
+                    {[{text: "intuitive", color: '#7c69f3'},
+                      {text: "fun", color: '#69cc7b'},
+                      {text: "accessible", color: '#2490ff'},
+                      {text: "affordable", color: '#d57a24'},
+                    ].map(({text: word, color}) => [
+                      <span key={word} style={{color}} className={word}>{word}</span>,
+                      <Typist.Delay key={word} ms={2000} />,
+                      <Typist.Backspace key={word} count={word.length}/>,
+                    ])}
+                  </Typist>
+                )}
+              </h1>
+            </h1>
           </div>
-          <div className="absolute left-1/2 w-screen h-full top-0 -translate-x-1/2">
-            <div className="sticky w-screen h-screen top-0 left-0 flex justify-center items-center">
-              <div ref={homeRefBg} className="rounded-full home-bg w-[80%] h-[80vh]" />
-            </div>
+          <div className="call__to__action" style={{opacity: opacityValue}}>
+            <button
+              className="start__learning__btn"
+              onClick={() => {
+                // setShowLandingPage(false);
+                // setIsSliderOpen(true);
+                // navigator && navigator.vibrate && navigator.vibrate(5);
+              }}
+            >
+              Start Learning
+            </button>
           </div>
-          <div className="absolute left-1/2 w-screen h-full top-0 -translate-x-1/2">
-            <div className="sticky w-screen h-screen top-0 left-0 flex justify-center items-center">
-              <div ref={videoRefBg} className="rounded-full video-bg w-[80%] h-[80vh]" />
-            </div>
-          </div>
-          <div className="absolute left-1/2 w-screen h-full top-0 -translate-x-1/2">
-            <div className="sticky w-screen h-screen top-0 left-0 flex justify-center items-center">
-              <div ref={newsRefBg} className="rounded-full news-bg w-[80%] h-[80vh]" />
-            </div>
-          </div>
-          <div className="absolute left-1/2 w-screen h-full top-0 -translate-x-1/2">
-            <div className="sticky w-screen h-screen top-0 left-0 flex justify-center items-center">
-              <div ref={blazeRefBg} className="rounded-full blaze-bg w-[80%] h-[80vh]" />
-              <div className={"w-full h-screen backdrop-blur-[400px] absolute top-0 left-0"} />
-            </div>
-          </div>
-          {/*<div className="absolute w-screen h-full flex justify-center top-0 transform">*/}
-          {/*  <div ref={videoRefBg} className="sticky top-1/2 transform -translate-y-1/2 rounded-full video-bg w-[80%] h-[80vh]" />*/}
-          {/*</div>*/}
-          {/*<div className="absolute w-screen h-full flex justify-center top-0 transform">*/}
-          {/*  <div ref={newsRefBg} className="sticky top-1/2 transform -translate-y-1/2 rounded-full news-bg w-[80%] h-[80vh]" />*/}
-          {/*</div>*/}
-          {/*<div className="absolute w-screen h-full flex justify-center top-0 transform">*/}
-          {/*  <div ref={blazeRefBg} className="sticky top-1/2 transform -translate-y-1/2 rounded-full blaze-bg w-[80%] h-[80vh]" />*/}
-          {/*</div>*/}
-          <div className={"z-50"}>
-            <div className="h-screen flex flex-col justify-center items-start gap-5" style={{scrollSnapAlign: 'start', scrollSnapStop: 'always'}}>
-              <div>
-                <h2 className={"home-title title-text text-[2.5rem] font-[600]"}>Comprehensive Learning</h2>
-                <p className="pt-[5px] text-[1.25rem] text-white tracking-[1px]">Every topic. Every concept. Every question.</p>
-                <p className="pt-[5px] text-[1.25rem] text-white tracking-[1px]">India&apos;s most driven teachers have covered it all!</p>
-              </div>
-              <div className="flex items-center gap-4 mt-10">
-                <Image className="h-10 w-auto" src={GooglePlay} alt="Google Play" />
-                <Image className="h-10 w-auto" src={AppStore} alt="App Store" />
-              </div>
-            </div>
-            <div className="h-screen flex flex-col justify-center items-start gap-5" style={{scrollSnapAlign: 'start', scrollSnapStop: 'always'}}>
-              <div>
-                <h2 className={"videos-title title-text text-[2.5rem] font-[600]"}>Daily Live Classes</h2>
-                <p className="pt-[5px] text-[1.25rem] text-white tracking-[1px]">Being consistent is the key to success.</p>
-                <p className="pt-[5px] text-[1.25rem] text-white tracking-[1px]">So we come live EVERYDAY!</p>
-              </div>
-              <div className="flex items-center gap-4 mt-10">
-                <Image className="h-10 w-auto" src={GooglePlay} alt="Google Play" />
-                <Image className="h-10 w-auto" src={AppStore} alt="App Store" />
-              </div>
-            </div>
-            <div className="h-screen flex flex-col justify-center items-start gap-5" style={{scrollSnapAlign: 'start', scrollSnapStop: 'always'}}>
-              <div>
-                <h2 className={"news-title title-text text-[2.5rem] font-[600]"}>Interactive Classes</h2>
-                <p className="pt-[5px] text-[1.25rem] text-white tracking-[1px]">Chat with our teachers, take a quiz, learn!</p>
-                <p className="pt-[5px] text-[1.25rem] text-white tracking-[1px]">Your learning style is ours too.</p>
-              </div>
-              <div className="flex items-center gap-4 mt-10">
-                <Image className="h-10 w-auto" src={GooglePlay} alt="Google Play" />
-                <Image className="h-10 w-auto" src={AppStore} alt="App Store" />
-              </div>
-            </div>
-            <div className="h-screen flex flex-col justify-center items-start gap-5" style={{scrollSnapAlign: 'start', scrollSnapStop: 'always'}}>
-              <div>
-                <h2 className={"blaze-title title-text text-[2.5rem] font-[600]"}>Snap & Learn</h2>
-                <p className="pt-[5px] text-[1.25rem] text-white tracking-[1px]">This is something out of a sci-fi movie!</p>
-                <p className="pt-[5px] text-[1.25rem] text-white tracking-[1px]">Snap and that&apos;s it, we will solve your doubts.</p>
-              </div>
-              <div className="flex items-center gap-4 mt-10">
-                <Image className="h-10 w-auto" src={GooglePlay} alt="Google Play" />
-                <Image className="h-10 w-auto" src={AppStore} alt="App Store" />
-              </div>
-            </div>
+          {/*onClick={() => {window.scrollTo(0, window.innerHeight * 1.9)}}*/}
+          <div onClick={() => {
+            const el = document.getElementById('landing-scroll-section');
+            if(el) el.scrollIntoView();
+          }} className="down__scroll__indicator cursor-pointer" style={{opacity: opacityValue}}>
+            <svg
+              width={32}
+              height={32}
+              fill="currentColor"
+              aria-hidden="true"
+              preserveAspectRatio="xMidYMin"
+              style={{
+                "--size": 32,
+                "--rotate": "0deg",
+              }}
+              viewBox="0 0 24 24"
+            >
+              <path
+                fillRule="evenodd"
+                d="M12 4.25a.75.75 0 0 1 .75.75v12.19l5.72-5.72a.75.75 0 1 1 1.06 1.06l-7 7a.75.75 0 0 1-1.06 0l-7-7a.75.75 0 1 1 1.06-1.06l5.72 5.72V5a.75.75 0 0 1 .75-.75Z"
+                clipRule="evenodd"
+              />
+            </svg>
           </div>
         </div>
       </div>
-      <div className="bg-red-800 h-[200px] w-full" style={{scrollSnapAlign: 'start', scrollSnapStop: 'always'}} />
-    </main>
+      <main style={{scrollSnapType: 'y mandatory'}} className="pt-[120vh]">
+        <div id={"landing-scroll-section"} ref={scrollSectionRef} className="h-[400vh] bg-black relative" style={{background: `rgb(${RGB.join(',')})`, boxShadow: `0 -64px 64px 32px rgb(${RGB.join(',')})`}}>
+          <MobileViewSection />
+        </div>
+        <div className="bg-black relative" style={{scrollSnapAlign: 'start', width: '100%', height: 'auto', padding: '100px 0 150px'}}>
+          <LandingScrollSection />
+        </div>
+        {/*<PustackFooter keepVisible/>*/}
+      </main>
+    </>
   )
 }
+// This app is excellent for study purpose. Here u are provided with many video lecture and live class as well. It follow NCERT. PuStack make easy to understand.
+//   @Maitray Sinha
