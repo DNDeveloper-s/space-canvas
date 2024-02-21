@@ -1,3 +1,5 @@
+import UserAvatar from '@/assets/images/UserAvatar.webp';
+import ArtiAvatar from '@/assets/images/ArtiAvatar.webp';
 
 interface Range {
 	from: number;
@@ -27,4 +29,19 @@ export function getLinearRateNew(options: LinearRateOptions) {
 	if(options.acc < options.relativeRange.from) val = options.desiredRange.from;
 	if(options.acc > options.relativeRange.to) val = options.desiredRange.to;
 	return val;
+}
+
+export const botData = {
+	name: 'Arti AI',
+	image: ArtiAvatar
+};
+
+export const dummyUser = {
+	name: 'Saurabh Singh',
+	image: UserAvatar
+}
+
+export enum ChatGPTRole {
+	'USER' = 'user',
+	'ASSISTANT' = 'assistant'
 }

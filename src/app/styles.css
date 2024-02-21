@@ -313,13 +313,6 @@ html {
   cursor: pointer;
 }
 
-.space-wars-bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 100vw;
-}
 .space-wars-bg canvas {
   background: #0e1525;
 }

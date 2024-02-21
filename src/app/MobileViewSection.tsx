@@ -136,7 +136,8 @@ export default function MobileViewSection() {
 				</div>
 			</div>
 			<div className="absolute top-0 w-screen h-screen">
-				<div data-item={'home'} className="text-content-container h-screen bg-yellow-500 bg-opacity-0" />
+				<div data-item={'home'} className="text-content-container h-screen bg-yellow-500 bg-opacity-0">
+				</div>
 				<div data-item={'videos'} className="text-content-container h-screen bg-red-500 bg-opacity-0" />
 				<div data-item={'news'} className="text-content-container h-screen bg-blue-500 bg-opacity-0" />
 				<div data-item={'blaze'} className="text-content-container h-screen bg-green-500 bg-opacity-0" />

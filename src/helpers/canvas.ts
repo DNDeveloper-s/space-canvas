@@ -61,7 +61,8 @@ export const runCanvasScript = (canvas: HTMLCanvasElement, innerWidth = document
 
 	const mouse = {
 		x: innerWidth / 2,
-		y: innerHeight / 2
+		y: innerHeight / 2,
+		hovered: -1
 	}
 
 	const colors = ['#7f71c5', '#d6d7d7', '#D6D7D7FF', '#D6D7D7FF', '#D6D7D7FF', '#D6D7D7FF', '#266cb2', '#69cc7b', '#ebae70', '#dde0e4', '#D6D7D7FF', '#D6D7D7FF', '#D6D7D7FF', '#dde0e4', '#dde0e4', '#dde0e4', '#dde0e4', '#b4a866'];
@@ -85,6 +86,17 @@ export const runCanvasScript = (canvas: HTMLCanvasElement, innerWidth = document
 	let initialSpeed = window.innerWidth < 600 ? 0.45 : 0.91;
 	let speed = initialSpeed;
 
+	canvas.addEventListener('mousemove', e => {
+		const rect = canvas.getBoundingClientRect();
+		mouse.x = e.clientX - rect.left;
+		mouse.y = e.clientY - rect.top;
+	});
+
+	canvas.addEventListener('mouseleave', e => {
+		mouse.x = -1;
+		mouse.y = -1;
+	});
+
 	// addEventListener('scroll', e => {
 	// 	console.log('speed - ', e);
 	// 	speed += 0.1;
@@ -103,11 +115,15 @@ export const runCanvasScript = (canvas: HTMLCanvasElement, innerWidth = document
 		x = Math.random() * canvas.width;
 		y = Math.random() * canvas.height;
 		z = Math.random() * canvas.height;
+		hovered = false;
 		startZ;
-		// color = '#ff5e4c';
-		color = colors[randomIntFromInterval(0, colors.length - 1)];
-		size =  window.innerWidth < 600 ? randomIntFromInterval(0.2, 1.1) : randomIntFromInterval(0.4, 2.5);
-		constructor() {
+		color = '#ff5e4c';
+		id: number;
+		// color = colors[randomIntFromInterval(0, colors.length - 1)];
+		// size =  window.innerWidth < 600 ? randomIntFromInterval(0.2, 1.1) : randomIntFromInterval(0.4, 2.5);
+		size = 10;
+		constructor(i: number) {
+			this.id = i;
 			this.startZ = this.z;
 		}
 
@@ -147,14 +163,38 @@ export const runCanvasScript = (canvas: HTMLCanvasElement, innerWidth = document
 				c.globalAlpha = alpha;
 			}
 
+			const distanceToMouse = mouse.x > 0 && mouse.y > 0 ? Math.sqrt((mouse.x - x) ** 2 + (mouse.y - y) ** 2) : null
+			this.hovered = distanceToMouse !== null ? distanceToMouse < s : false;
+
+			if (mouse.hovered >= 0) {
+				mouse.hovered = (this.id === mouse.hovered) ? (this.hovered ? this.id : -1) : mouse.hovered;
+				c.canvas.style.cursor = 'pointer';
+			} else {
+				mouse.hovered = this.hovered ? this.id : -1;
+				c.canvas.style.cursor = 'default';
+			}
+
 			// Draw over the whole canvas to create the trail effect
 			// c.fillStyle = 'rgba(255, 255, 255, .05)';
 			// c.fillRect(0, 0, canvas.width, canvas.height);
 
 			c.beginPath()
+			c.fillStyle = this.color;
+
+
+			if(this.id === mouse.hovered) {
+				c.shadowColor = "white";
+				c.shadowOffsetX = 0;
+				c.shadowOffsetY = 0;
+				c.shadowBlur = 10;
+			} else {
+				c.shadowColor = "transparent";
+				c.shadowOffsetX = 0;
+				c.shadowOffsetY = 0;
+				c.shadowBlur = 0;
+			}
 			c.arc(x, y, s, 0, Math.PI * 2, false);
 			c.fill()
-			c.fillStyle = this.color;
 
 			// c.globalAlpha = alpha;
 			// console.log('1 - - ', (fl / this.z));
@@ -166,11 +206,21 @@ export const runCanvasScript = (canvas: HTMLCanvasElement, innerWidth = document
 		}
 
 		move() {
+			if(this.id === mouse.hovered) return;
 			this.z -= speed;
 			if(this.z <= 0) {
 				this.z = Math.random() * canvas.width;
 				this.startZ = this.z;
 			}
+		}
+
+		isMouseOver() {
+			const x = (this.x - centerX) * (fl / this.z);
+			const y = (this.y - centerY) * (fl / this.z);
+			const s = this.size * (fl / this.z) + 1;
+
+			const distance = Math.sqrt((mouse.x - x) ** 2 + (mouse.y - y) ** 2);
+			return distance < s;
 		}
 	}
 
@@ -183,7 +233,7 @@ export const runCanvasScript = (canvas: HTMLCanvasElement, innerWidth = document
 
 		for (let i = 0; i < particleCount; i++) {
 
-			particles.push(new Particle())
+			particles.push(new Particle(i))
 		}
 	}
 

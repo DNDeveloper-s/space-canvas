@@ -108,7 +108,7 @@ function LiComponent({src, header, avatarSrc, hex, avatarName, skill, descriptio
 		<li className="carousel-imaged-ul-li">
 			<Link href={url} className="carousel-imaged-item">
 				<div className="carousel-imaged-item-header">
-					<span className={'pb-3 ' + (avatarSrc.key)}>{header}</span>
+					<span className={'pb-3'}>{header}</span>
 				</div>
 				<span className="carousel-imaged-item-image">
           <span className="carousel-imaged-item-image-holder">
@@ -194,7 +194,7 @@ function LiCommentComponent({text, author, rating}) {
 		<Link target={"_blank"} href={'#'} className="carousel-comment-list-item !h-[199px] cursor-pointer">
 			<div className={"w-full h-full relative bg-gray-950 rounded-[inherit] z-20 overflow-hidden "}>
 				<div className="absolute flex items-center justify-center bottom-0 translate-y-3/4 left-1/2 -translate-x-1/2 pointer-events-none -z-10 h-full aspect-square">
-					<div style={{backgroundColor: '#cc2525'}} className="absolute inset-0 translate-z-0 rounded-full blur-[50px] opacity-70"></div>
+					{/*<div style={{backgroundColor: '#cc2525'}} className="absolute inset-0 translate-z-0 rounded-full blur-[50px] opacity-70"></div>*/}
 				</div>
 				<div className="flex flex-col gap-3 justify-between text-white p-4 h-full">
 					<p>{text}</p>
@@ -260,39 +260,115 @@ const LandingScrollSection = () => {
 		if(ref3.current) initComment.current.x = ref3.current.clientWidth;
 	}, [])
 
-	useAnimationFrame((time, delta) => {
-		if(ref.current && ref1.current && ref2.current && !stopRef.current) {
-			const width = ref.current.clientWidth;
+	// useAnimationFrame((time, delta) => {
+	// 	if(ref.current && ref1.current && ref2.current && !stopRef.current) {
+	// 		const width = ref.current.clientWidth;
+	// 		{
+	// 			const _init = init.current;
+	// 			_init.vx += _init.ax;
+	//
+	// 			_init.x += _init.vx;
+	//
+	// 			if (_init.x >= (ref.current.clientWidth * 2)) _init.x = ref.current.clientWidth;
+	// 			if (_init.x <= 0) _init.x = ref.current.clientWidth;
+	//
+	// 			ref.current.style.transform = `translateX(-${_init.x}px)`;
+	// 			ref1.current.style.transform = `translateX(-${_init.x}px)`;
+	// 			ref2.current.style.transform = `translateX(-${_init.x}px)`;
+	// 		}
+	// 	}
+	//
+	// 	if(!ref3.current || !ref4.current || !ref5.current || stopRefComment.current) return;
+	// 	{
+	// 		const _init = initComment.current;
+	// 		_init.vx += _init.ax;
+	//
+	// 		_init.x += _init.vx;
+	//
+	// 		if(_init.x >= (ref3.current.clientWidth * 2)) _init.x = ref3.current.clientWidth;
+	// 		if(_init.x <= 0) _init.x = ref3.current.clientWidth;
+	//
+	// 		ref3.current.style.transform = `translateX(-${_init.x}px)`;
+	// 		ref4.current.style.transform = `translateX(-${_init.x}px)`;
+	// 		ref5.current.style.transform = `translateX(-${_init.x}px)`;
+	// 	}
+	// })
+
+	useLayoutEffect(() => {
+		if(ref.current) init.current.x = ref.current.clientWidth;
+
+		if(ref3.current) initComment.current.x = ref3.current.clientWidth;
+	}, [])
+
+	useEffect(() => {
+		var lastTime = 0;
+		var vendors = ['ms', 'moz', 'webkit', 'o'];
+		for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+			window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+			window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame']
+				|| window[vendors[x]+'CancelRequestAnimationFrame'];
+		}
+
+		let id = 0;
+		if (!window.requestAnimationFrame)
+		{ // @ts-ignore
+			window.requestAnimationFrame = function(callback, element) {
+				var currTime = new Date().getTime();
+				var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+				id = window.setTimeout(function() { callback(currTime + timeToCall); },
+					timeToCall);
+				lastTime = currTime + timeToCall;
+				return id;
+			};
+		}
+
+		function draw() {
+			if(ref.current && ref1.current && ref2.current && !stopRef.current) {
+				const width = ref.current.clientWidth;
+				{
+					const _init = init.current;
+					_init.vx += _init.ax;
+
+					_init.x += _init.vx;
+
+					if (_init.x >= (ref.current.clientWidth * 2)) _init.x = ref.current.clientWidth;
+					if (_init.x <= 0) _init.x = ref.current.clientWidth;
+
+					ref.current.style.transform = `translateX(-${_init.x}px)`;
+					ref1.current.style.transform = `translateX(-${_init.x}px)`;
+					ref2.current.style.transform = `translateX(-${_init.x}px)`;
+				}
+			}
+
+			if(!ref3.current || !ref4.current || !ref5.current || stopRefComment.current) return;
 			{
-				const _init = init.current;
+				const _init = initComment.current;
 				_init.vx += _init.ax;
 
 				_init.x += _init.vx;
 
-				if (_init.x >= (ref.current.clientWidth * 2)) _init.x = ref.current.clientWidth;
-				if (_init.x <= 0) _init.x = ref.current.clientWidth;
+				if(_init.x >= (ref3.current.clientWidth * 2)) _init.x = ref3.current.clientWidth;
+				if(_init.x <= 0) _init.x = ref3.current.clientWidth;
 
-				ref.current.style.transform = `translateX(-${_init.x}px)`;
-				ref1.current.style.transform = `translateX(-${_init.x}px)`;
-				ref2.current.style.transform = `translateX(-${_init.x}px)`;
+				ref3.current.style.transform = `translateX(-${_init.x}px)`;
+				ref4.current.style.transform = `translateX(-${_init.x}px)`;
+				ref5.current.style.transform = `translateX(-${_init.x}px)`;
 			}
+			requestAnimationFrame(draw);
 		}
 
-		if(!ref3.current || !ref4.current || !ref5.current || stopRefComment.current) return;
-		{
-			const _init = initComment.current;
-			_init.vx += _init.ax;
+		requestAnimationFrame(draw);
 
-			_init.x += _init.vx;
+		if (!window.cancelAnimationFrame)
+			window.cancelAnimationFrame = function(id) {
+				clearTimeout(id);
+			};
 
-			if(_init.x >= (ref3.current.clientWidth * 2)) _init.x = ref3.current.clientWidth;
-			if(_init.x <= 0) _init.x = ref3.current.clientWidth;
-
-			ref3.current.style.transform = `translateX(-${_init.x}px)`;
-			ref4.current.style.transform = `translateX(-${_init.x}px)`;
-			ref5.current.style.transform = `translateX(-${_init.x}px)`;
+		return () => {
+			window.cancelAnimationFrame(id);
 		}
-	})
+	}, [])
+
 
 	const handleWheel = (e: any, isComment: boolean) => {
 		e.preventDefault();
