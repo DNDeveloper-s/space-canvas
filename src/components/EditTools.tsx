@@ -8,7 +8,7 @@ import { IoColorPaletteOutline } from 'react-icons/io5';
 import { LuUpload } from 'react-icons/lu';
 import {MdFormatBold, MdOutlineFormatColorFill} from 'react-icons/md';
 import { PiCircle, PiLineSegment, PiRectangle, PiSelectionPlusLight } from 'react-icons/pi';
-import { RiFontSize, RiShapesFill } from 'react-icons/ri';
+import { RiFontSize, RiShapeFill } from 'react-icons/ri';
 import { TbOvalVertical } from 'react-icons/tb';
 import { SketchPicker } from 'react-color'
 import fetchFonts from '@/helpers/fonts';
@@ -24,7 +24,7 @@ export interface Tool {
 
 const tools = [
     {id: 'selection', name: 'Selection', icon: <PiSelectionPlusLight /> },
-    {id: 'shapes', name: 'Shapes', icon: <RiShapesFill /> },
+    {id: 'shapes', name: 'Shapes', icon: <RiShapeFill /> },
     {id: 'text', name: 'Font', icon: <BsFonts /> },
     {id: 'upload', name: 'Upload Image', icon: <LuUpload /> },
     {id: 'fill', name: 'Fill Color', icon: <MdOutlineFormatColorFill /> },
@@ -59,7 +59,7 @@ const ColorPickerTool:FC<ColorPickerToolProps> = ({disabled, selected, handleCli
     }
 
     useClickAway(ref, handleClickOutside);
-    
+
     function onChange(color: string, completed: boolean = false) {
         // setSelectedShape(tool);
         if(disabled) return;
@@ -72,16 +72,16 @@ const ColorPickerTool:FC<ColorPickerToolProps> = ({disabled, selected, handleCli
         setShowOptions(c => !c);
         handleClick(tool);
     }
-    
+
     return (
-        <div style={{opacity: disabled ? 0.2 : 1}} ref={ref} className='relative'>
-            <div style={{color: color, fill: color, stroke: color, cursor: disabled ? 'not-allowed' : 'pointer'}} onClick={handleToggle} className={'flex text-xl items-center p-1 cursor-pointer hover:bg-gray-100 rounded transition-all ' + (selected ? ' !bg-gray-200' : '')}>
-                {tool.icon}
-            </div>
-            {showOptions && <div className={'absolute left-[calc(100%+15px)] top-0 rounded'}>
-                <SketchPicker onChangeComplete={(obj: any) => {onChange(obj.hex, true)}} color={color} onChange={(obj: any) => onChange(obj.hex)} />
-            </div>}
-        </div>
+      <div style={{opacity: disabled ? 0.2 : 1}} ref={ref} className='relative'>
+          <div style={{color: color, fill: color, stroke: color, cursor: disabled ? 'not-allowed' : 'pointer'}} onClick={handleToggle} className={'flex text-xl items-center p-1 cursor-pointer hover:bg-gray-100 rounded transition-all ' + (selected ? ' !bg-gray-200' : '')}>
+              {tool.icon}
+          </div>
+          {showOptions && <div className={'absolute left-[calc(100%+15px)] top-0 rounded'}>
+              <SketchPicker onChangeComplete={(obj: any) => {onChange(obj.hex, true)}} color={color} onChange={(obj: any) => onChange(obj.hex)} />
+          </div>}
+      </div>
     )
 }
 
@@ -100,7 +100,7 @@ const ShapeTool:FC<ShapeToolProps> = ({selected, handleToolClick}) => {
     }
 
     useClickAway(ref, handleClickOutside);
-    
+
     function onChange(tool: Tool) {
         setSelectedShape(tool);
         handleToolClick(tool);
@@ -110,20 +110,20 @@ const ShapeTool:FC<ShapeToolProps> = ({selected, handleToolClick}) => {
         setShowOptions(c => !c);
         handleToolClick(selectedShape);
     }
-    
+
     return (
-        <div ref={ref} className='relative'>
-            <div onClick={handleToggle} className={'flex text-3xl items-center p-1 cursor-pointer hover:bg-gray-100 rounded transition-all ' + (selected ? ' !bg-gray-200' : '')}>
-                {selectedShape.icon}
-            </div>
-            {showOptions && <div className={'absolute left-[calc(100%+15px)] bg-gray-200 top-0 grid grid-cols-[30px_30px] gap-2 p-2 rounded text-2xl'}>
-                {shapeTools.map(shapeTool => (
-                    <div onClick={() => onChange(shapeTool)} className={'p-1 cursor-pointer hover:bg-gray-100 rounded transition-all ' + (selectedShape.id === shapeTool.id ? ' !bg-gray-200' : '')}>
-                        {shapeTool.icon}
-                    </div>
-                ))}
-            </div>}
-        </div>
+      <div ref={ref} className='relative'>
+          <div onClick={handleToggle} className={'flex text-3xl items-center p-1 cursor-pointer hover:bg-gray-100 rounded transition-all ' + (selected ? ' !bg-gray-200' : '')}>
+              {selectedShape.icon}
+          </div>
+          {showOptions && <div className={'absolute left-[calc(100%+15px)] bg-gray-200 top-0 grid grid-cols-[30px_30px] gap-2 p-2 rounded text-2xl'}>
+              {shapeTools.map(shapeTool => (
+                <div key={shapeTool.id} onClick={() => onChange(shapeTool)} className={'p-1 cursor-pointer hover:bg-gray-100 rounded transition-all ' + (selectedShape.id === shapeTool.id ? ' !bg-gray-200' : '')}>
+                    {shapeTool.icon}
+                </div>
+              ))}
+          </div>}
+      </div>
     )
 }
 
@@ -156,7 +156,7 @@ const FontOptionsTool: FC<FontOptionsToolProps> = (props) => {
 
     useEffect(() => {
         fetchFonts()
-            .then(fontsAvailable => setFontFamilies(fontsAvailable as string[] ?? []))
+          .then(fontsAvailable => setFontFamilies(fontsAvailable as string[] ?? []))
     }, [])
 
     const ref = useRef(null);
@@ -166,7 +166,7 @@ const FontOptionsTool: FC<FontOptionsToolProps> = (props) => {
     }
 
     useClickAway(ref, handleClickOutside);
-    
+
     function onChange(key: keyof FontFormat, value: string) {
         // setSelectedShape(tool);
         // handleToolClick(tool);
@@ -191,23 +191,23 @@ const FontOptionsTool: FC<FontOptionsToolProps> = (props) => {
     }
 
     return (
-        <div ref={ref} className='relative'>
-            <div onClick={handleToggle} className={'flex text-xl items-center p-1 cursor-pointer hover:bg-gray-100 rounded transition-all ' + (props.selected ? ' !bg-gray-200' : '')}>
-                <RiFontSize />
-            </div>
-            {showOptions && <div className={'absolute left-[calc(100%+15px)] bg-gray-200 top-0 flex items-center gap-2 p-2 rounded text-base'}>
-                <select onChange={(e) => onChange('fontSize', e.target.value)} name="" id="">
-                    {sizesAvailable.map(size => (
-                        <option selected={size.toString() === fontDetails.fontSize.toString()} value={size}>{size}</option>
-                    ))}
-                </select>
-                <select onChange={(e) => onChange('fontFamily', e.target.value)} name="" id="">
-                    {fontFamilies.map(font => (
-                        <option onFocus={(e) => handleMouseEnter(font, e)} onMouseEnter={(e) => handleMouseEnter(font, e)} selected={font === fontDetails.fontFamily} value={font}>{font}</option>
-                    ))}
-                </select>
-            </div>}
-        </div>
+      <div ref={ref} className='relative'>
+          <div onClick={handleToggle} className={'flex text-xl items-center p-1 cursor-pointer hover:bg-gray-100 rounded transition-all ' + (props.selected ? ' !bg-gray-200' : '')}>
+              <RiFontSize />
+          </div>
+          {showOptions && <div className={'absolute left-[calc(100%+15px)] bg-gray-200 top-0 flex items-center gap-2 p-2 rounded text-base'}>
+              <select onChange={(e) => onChange('fontSize', e.target.value)} name="" id="">
+                  {sizesAvailable.map(size => (
+                    <option key={size} selected={size.toString() === fontDetails.fontSize.toString()} value={size}>{size}</option>
+                  ))}
+              </select>
+              <select onChange={(e) => onChange('fontFamily', e.target.value)} name="" id="">
+                  {fontFamilies.map(font => (
+                    <option key={font} onFocus={(e) => handleMouseEnter(font, e)} onMouseEnter={(e) => handleMouseEnter(font, e)} selected={font === fontDetails.fontFamily} value={font}>{font}</option>
+                  ))}
+              </select>
+          </div>}
+      </div>
     )
 }
 
@@ -343,29 +343,29 @@ const EditTools: FC<EditToolsProps> = (props) => {
     }
 
     return (
-        <div className='relative bg-white rounded py-2 px-1'>
-            {/* <div>
+      <div className='relative bg-white rounded py-2 px-1'>
+          {/* <div>
                 <h1>Edit Tools</h1>
             </div> */}
-            <div className='flex flex-col items-center space-y-4'>
-                {tools.filter(c => !['fill', 'stroke'].includes(c.id)).map((tool: Tool) => {
+          <div className='flex flex-col items-center space-y-4 text-black'>
+              {tools.filter(c => !['fill', 'stroke'].includes(c.id)).map((tool: Tool) => {
 
-                    if(tool.id === 'shapes') {
-                        return <ShapeTool handleToolClick={handleToolClick} selected={shapeTools.map(c => c.id).includes(selected.id)} />
-                    }
+                  if(tool.id === 'shapes') {
+                      return <ShapeTool key={'shape'} handleToolClick={handleToolClick} selected={shapeTools.map(c => c.id).includes(selected.id)} />
+                  }
 
-                    return (
-                        <div onClick={e => handleToolClick(tool)} key={tool.id} className={'flex text-3xl items-center p-1 cursor-pointer hover:bg-gray-100 rounded transition-all ' + (selected.id === tool.id ? ' !bg-gray-200' : '')}>
-                            {tool.icon}
-                        </div>
-                    )
-                })}
-                {/*<div className='h-[2px] bg-gray-200 w-full' />*/}
-                {/*<FontOptionsTool selected={selected.id === 'text'} handleFontChange={(fontDetails: FontFormat) => props.handleFormatChange(fontDetails)} />*/}
-                {/*<ColorPickerTool disabled={false} selected={selected.id === 'fill'} tool={tools.find(c => ['fill'].includes(c.id))!} handleClick={(tool: Tool) => {setSelected(tool)}} handleColorChange={(color) => handleColorChange(color, 'fill')} />*/}
-                {/*<ColorPickerTool disabled={false} selected={selected.id === 'stroke'} tool={tools.find(c => ['stroke'].includes(c.id))!} handleClick={(tool: Tool) => {setSelected(tool)}} handleColorChange={(color) => handleColorChange(color, 'stroke')} />*/}
-            </div>
-        </div>
+                  return (
+                    <div onClick={e => handleToolClick(tool)} key={tool.id} className={'flex text-3xl items-center p-1 cursor-pointer hover:bg-gray-100 rounded transition-all ' + (selected.id === tool.id ? ' !bg-gray-200' : '')}>
+                        {tool.icon}
+                    </div>
+                  )
+              })}
+              {/*<div className='h-[2px] bg-gray-200 w-full' />*/}
+              {/*<FontOptionsTool selected={selected.id === 'text'} handleFontChange={(fontDetails: FontFormat) => props.handleFormatChange(fontDetails)} />*/}
+              {/*<ColorPickerTool disabled={false} selected={selected.id === 'fill'} tool={tools.find(c => ['fill'].includes(c.id))!} handleClick={(tool: Tool) => {setSelected(tool)}} handleColorChange={(color) => handleColorChange(color, 'fill')} />*/}
+              {/*<ColorPickerTool disabled={false} selected={selected.id === 'stroke'} tool={tools.find(c => ['stroke'].includes(c.id))!} handleClick={(tool: Tool) => {setSelected(tool)}} handleColorChange={(color) => handleColorChange(color, 'stroke')} />*/}
+          </div>
+      </div>
     )
 }
 
